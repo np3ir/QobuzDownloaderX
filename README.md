@@ -14,9 +14,6 @@ Inspired by Qo-DL by <a href="https://github.com/Sorrow446">Sorrow</a> & <a href
   </a>
 </p>
 
-Telegram Group Chat - <a href="https://t.me/QbdLX">@QbdLX</a><br />
-Telegram Updates Channel - <a href="https://t.me/QobuzDownloaderX">@QobuzDownloaderX</a><br />
-I'm never really active on Telegram, but these are the official channels.
 
 # About
 QobuzDownloaderX is a program for downloading music streams from the streaming platform <a href="https://qobuz.com/">Qobuz</a>.
