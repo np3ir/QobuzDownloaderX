@@ -211,6 +211,7 @@ namespace QobuzDownloaderX
             Miscellaneous.InitializePanels(this);
             Miscellaneous.InitializeLanguage(this);
             Miscellaneous.SetDownloadPath(this);
+            InitializeTemplateTooltips();
 
             // Get and display version number.
             versionNumber.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -604,6 +605,89 @@ namespace QobuzDownloaderX
                 downloadFolderTextBox.Text = folderBrowser.SelectedPath;
                 downloadLocation = folderBrowser.SelectedPath;
             }
+        }
+
+        private void InitializeTemplateTooltips()
+        {
+            var tip = new ToolTip
+            {
+                ShowAlways = true,
+                AutoPopDelay = 40000,
+                InitialDelay = 400,
+                ReshowDelay = 400,
+            };
+
+            const string fullRef =
+                "──── ALBUM ────\r\n" +
+                "  %artistname%              Album artist\r\n" +
+                "  %artistinitial%           First letter of artist (numbers → #)\r\n" +
+                "  %artistid%                Artist ID\r\n" +
+                "  %albumtitle%              Album title (+ version)\r\n" +
+                "  %year%                    Release year (YYYY)\r\n" +
+                "  %releasedate%             Full date (YYYY-MM-DD)\r\n" +
+                "  %releasetype%             Album / Single / EP...\r\n" +
+                "  %label%                   Record label\r\n" +
+                "  %albumgenre%              Genre\r\n" +
+                "  %bitdepth%                Bit depth\r\n" +
+                "  %samplerate%              Sample rate (kHz)\r\n" +
+                "  %totaldiscs%              Total number of discs\r\n" +
+                "  %totaltracks%             Total number of tracks\r\n" +
+                "  %upc%                     UPC / Barcode\r\n" +
+                "  %copyright%               Copyright\r\n" +
+                "  %albumcomposer%           Album composer\r\n" +
+                "  %albumid%                 Album ID\r\n" +
+                "  %albumurl%                Album URL\r\n" +
+                "  %albumdescription%        Album description\r\n" +
+                "  %format%                  File format (FLAC, MP3...)\r\n" +
+                "  %formatwithquality%       Format + quality info\r\n" +
+                "  %formatwithhiresquality%  Format + Hi-Res quality info\r\n" +
+                "\r\n──── TRACK ────\r\n" +
+                "  %tracknumber%             Track number (zero-padded)\r\n" +
+                "  %tracktitle%              Title + version\r\n" +
+                "  %trackversion%            Version only (e.g. Remastered)\r\n" +
+                "  %trackartist%             Track performer\r\n" +
+                "  %trackcomposer%           Composer\r\n" +
+                "  %discnumber%              Disc number (zero-padded)\r\n" +
+                "  %isrc%                    ISRC code\r\n" +
+                "  %trackid%                 Track ID\r\n" +
+                "  %trackbitdepth%           Track bit depth\r\n" +
+                "  %tracksamplerate%         Track sample rate\r\n" +
+                "  %trackformat%             File format\r\n" +
+                "  %trackformatwithquality%       Format + quality info\r\n" +
+                "  %trackformatwithhiresquality%  Format + Hi-Res quality info\r\n" +
+                "\r\n──── EXPLICIT ADVISORY ────\r\n" +
+                "  %trackpaifex%             'Explicit' if explicit, empty if not\r\n" +
+                "  %trackpaifexshort%        'E' if explicit, empty if not\r\n" +
+                "  %trackpaifexenclosed%     '(Explicit)' if explicit\r\n" +
+                "  %trackpaifcl%             'Clean' if clean, empty if not\r\n" +
+                "  %albumpaifex%             Same as above, album-level\r\n" +
+                "\r\n──── TIP ────\r\n" +
+                "  Use \\ to create subfolders. Example:\r\n" +
+                "  %artistinitial%\\%artistname%\\(%year%) %albumtitle%\\%tracknumber% - %tracktitle%";
+
+            const string playlistRef =
+                "──── PLAYLIST ────\r\n" +
+                "  %playlisttitle%    Playlist name\r\n" +
+                "  %playlistid%       Playlist ID\r\n" +
+                "\r\n──── TRACK ────\r\n" +
+                "  %tracknumber%      Track number / position\r\n" +
+                "  %tracktitle%       Title + version\r\n" +
+                "  %trackversion%     Version only\r\n" +
+                "  %trackartist%      Track performer\r\n" +
+                "  %artistname%       Album artist\r\n" +
+                "  %albumtitle%       Album title\r\n" +
+                "  %year%             Year\r\n" +
+                "  %discnumber%       Disc number\r\n" +
+                "  %isrc%             ISRC\r\n" +
+                "  %format%           File format";
+
+            tip.SetToolTip(trackTemplateTextBox, fullRef);
+            tip.SetToolTip(vaTrackTemplateTextBox, fullRef);
+            tip.SetToolTip(albumTemplateTextBox, fullRef);
+            tip.SetToolTip(artistTemplateTextBox, fullRef);
+            tip.SetToolTip(favoritesTemplateTextBox, fullRef);
+            tip.SetToolTip(cdTemplateTextBox, fullRef);
+            tip.SetToolTip(playlistTemplateTextBox, playlistRef);
         }
 
         private void resetTemplatesButton_Click(object sender, EventArgs e)

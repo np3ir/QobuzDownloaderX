@@ -266,25 +266,131 @@
     <value>True</value>
   </metadata>
   <data name="templatesListTextBox.Text" xml:space="preserve">
-    <value>— RELEASE SPECIFIC —
+    <value>════════════════════════════════════════
+  RELEASE / ALBUM
+════════════════════════════════════════
 
-%AlbumID% | %AlbumURL% | %AlbumGenre% | %AlbumComposer% | %AlbumTitle% | %Label% | %Copyright% | %UPC% | %ReleaseDate% | %Year% | %ReleaseType% | %ArtistName% | %Format% | %FormatWithQuality% | %FormatWithHiResQuality% | %BitDepth% | %SampleRate%
-// Parental warning templates //
-%AlbumPA% | %AlbumPAShort% | %AlbumPAifEx% | %AlbumPAifExShort% | %AlbumPAifCl% | %AlbumPAifClShort% | %AlbumPAEnclosed% | %AlbumPAEnclosed[]% | %AlbumPAEnclosedShort% | %AlbumPAEnclosedShort[]% | %AlbumPAifExEnclosed% | %AlbumPAifExEnclosed[]% | %AlbumPAifExEnclosedShort% | %AlbumPAifExEnclosedShort[]% | %AlbumPAifClEnclosed% | %AlbumPAifClEnclosed[]% | %AlbumPAifClEnclosedShort% | %AlbumPAifClEnclosedShort[]%
+%ArtistName%                  →  Main album artist
+%ArtistInitial%               →  First letter of artist (numbers → #)
+%ArtistID%                    →  Artist Qobuz ID
+%AlbumTitle%                  →  Album title (+ version if present)
+%AlbumID%                     →  Album Qobuz ID
+%AlbumURL%                    →  Full Qobuz URL of the album
+%AlbumGenre%                  →  Genre
+%AlbumComposer%               →  Album composer (useful for classical)
+%Label%                       →  Record label
+%Copyright%                   →  Copyright string
+%UPC%                         →  UPC / Barcode
+%ReleaseDate%                 →  Full release date (YYYY-MM-DD)
+%Year%                        →  Release year only (YYYY)
+%ReleaseType%                 →  Album / Single / Ep / Compilation
+%BitDepth%                    →  Maximum bit depth (16 or 24)
+%SampleRate%                  →  Maximum sample rate in kHz
+%TotalDiscs%                  →  Total number of discs
+%TotalTracks%                 →  Total number of tracks
+%AlbumDescription%            →  Editorial description of the album
+%Format%                      →  File format (FLAC, MP3)
+%FormatWithQuality%           →  Format + quality  e.g. FLAC (24bit-96kHz)
+%FormatWithHiResQuality%      →  Format + quality (Hi-Res only, else just FLAC)
 
-— TRACK SPECIFIC —
+════════════════════════════════════════
+  RELEASE / ALBUM — PARENTAL ADVISORY
+════════════════════════════════════════
 
-%TrackArtist% | %TrackComposer% | %TrackID% | %TrackNumber% | %TrackTitle% | %ISRC% | %TrackFormat% | %TrackFormatWithHiResQuality% | %TrackFormatWithQuality% |%TrackBitDepth% | %TrackSampleRate%
-// Parental warning templates //
-%TrackPA% | %TrackPAShort% | %TrackPAifEx% | %TrackPAifExShort% | %TrackPAifCl% | %TrackPAifClShort% | %TrackPAEnclosed% | %TrackPAEnclosed[]% | %TrackPAEnclosedShort% | %TrackPAEnclosedShort[]% | %TrackPAifExEnclosed% | %TrackPAifExEnclosed[]% | %TrackPAifExEnclosedShort% | %TrackPAifExEnclosedShort[]% | %TrackPAifClEnclosed% | %TrackPAifClEnclosed[]% | %TrackPAifClEnclosedShort% | %TrackPAifClEnclosedShort[]%
+%AlbumPA%                     →  Always shows: "Explicit" or "Clean"
+%AlbumPAShort%                →  Always shows: "E" or "C"
+%AlbumPAifEx%                 →  "Explicit" if explicit,  empty if clean
+%AlbumPAifExShort%            →  "E" if explicit,  empty if clean
+%AlbumPAifCl%                 →  "Clean" if clean,  empty if explicit
+%AlbumPAifClShort%            →  "C" if clean,  empty if explicit
+%AlbumPAEnclosed%             →  "(Explicit)" or "(Clean)"
+%AlbumPAEnclosed[]%           →  "[Explicit]" or "[Clean]"
+%AlbumPAEnclosedShort%        →  "(E)" or "(C)"
+%AlbumPAEnclosedShort[]%      →  "[E]" or "[C]"
+%AlbumPAifExEnclosed%         →  "(Explicit)" if explicit,  empty if clean
+%AlbumPAifExEnclosed[]%       →  "[Explicit]" if explicit,  empty if clean
+%AlbumPAifExEnclosedShort%    →  "(E)" if explicit,  empty if clean
+%AlbumPAifExEnclosedShort[]%  →  "[E]" if explicit,  empty if clean
+%AlbumPAifClEnclosed%         →  "(Clean)" if clean,  empty if explicit
+%AlbumPAifClEnclosed[]%       →  "[Clean]" if clean,  empty if explicit
+%AlbumPAifClEnclosedShort%    →  "(C)" if clean,  empty if explicit
+%AlbumPAifClEnclosedShort[]%  →  "[C]" if clean,  empty if explicit
 
-— PLAYLIST SPECIFIC —
+════════════════════════════════════════
+  TRACK
+════════════════════════════════════════
 
-%PlaylistID% | %PlaylistTitle% | %Format% | %FormatWithHiResQuality% | %FormatWithQuality%
+%TrackNumber%                 →  Track number, zero-padded
+%TrackTitle%                  →  Track title (+ version if present)
+%TrackVersion%                →  Version only, without title  (e.g. Remastered)
+%TrackArtist%                 →  Track performer (differs from album artist in V/A)
+%TrackComposer%               →  Track composer
+%TrackID%                     →  Track Qobuz ID
+%ISRC%                        →  International Standard Recording Code
+%DiscNumber%                  →  Disc number, zero-padded
+%TrackBitDepth%               →  Bit depth of this track
+%TrackSampleRate%             →  Sample rate of this track in kHz
+%TrackFormat%                 →  File format
+%TrackFormatWithQuality%      →  Format + quality for this track
+%TrackFormatWithHiResQuality% →  Format + Hi-Res quality for this track
 
-— CD SPECIFIC —
+════════════════════════════════════════
+  TRACK — PARENTAL ADVISORY
+════════════════════════════════════════
 
-%DiscNumber%</value>
+%TrackPA%                     →  Always shows: "Explicit" or "Clean"
+%TrackPAShort%                →  Always shows: "E" or "C"
+%TrackPAifEx%                 →  "Explicit" if explicit,  empty if clean  ← most used
+%TrackPAifExShort%            →  "E" if explicit,  empty if clean
+%TrackPAifCl%                 →  "Clean" if clean,  empty if explicit
+%TrackPAifClShort%            →  "C" if clean,  empty if explicit
+%TrackPAEnclosed%             →  "(Explicit)" or "(Clean)"
+%TrackPAEnclosed[]%           →  "[Explicit]" or "[Clean]"
+%TrackPAEnclosedShort%        →  "(E)" or "(C)"
+%TrackPAEnclosedShort[]%      →  "[E]" or "[C]"
+%TrackPAifExEnclosed%         →  "(Explicit)" if explicit,  empty if clean
+%TrackPAifExEnclosed[]%       →  "[Explicit]" if explicit,  empty if clean
+%TrackPAifExEnclosedShort%    →  "(E)" if explicit,  empty if clean
+%TrackPAifExEnclosedShort[]%  →  "[E]" if explicit,  empty if clean
+%TrackPAifClEnclosed%         →  "(Clean)" if clean,  empty if explicit
+%TrackPAifClEnclosed[]%       →  "[Clean]" if clean,  empty if explicit
+%TrackPAifClEnclosedShort%    →  "(C)" if clean,  empty if explicit
+%TrackPAifClEnclosedShort[]%  →  "[C]" if clean,  empty if explicit
+
+════════════════════════════════════════
+  PLAYLIST
+════════════════════════════════════════
+
+%PlaylistID%                  →  Playlist Qobuz ID
+%PlaylistTitle%               →  Playlist name
+%Format%                      →  File format
+%FormatWithQuality%           →  Format + quality
+%FormatWithHiResQuality%      →  Format + Hi-Res quality
+
+════════════════════════════════════════
+  CD
+════════════════════════════════════════
+
+%DiscNumber%                  →  Disc number, zero-padded
+
+════════════════════════════════════════
+  EXAMPLES
+════════════════════════════════════════
+
+A-Z library:
+  %ArtistInitial%\%ArtistName%\(%Year%) %AlbumTitle%\%TrackNumber% - %TrackTitle%
+
+Multi-disc:
+  %ArtistName%\(%Year%) %AlbumTitle%\CD%DiscNumber%\%TrackNumber% - %TrackTitle%
+
+With quality in folder:
+  %ArtistName%\(%Year%) %AlbumTitle% [%FormatWithHiResQuality%]\%TrackNumber% - %TrackTitle%
+
+With explicit tag:
+  %TrackNumber% - %TrackTitle% %TrackPAifExEnclosed%
+
+V/A compilation:
+  %AlbumTitle%\%TrackNumber% - %TrackArtist% - %TrackTitle%</value>
   </data>
   <metadata name="additionalSettingsButton.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

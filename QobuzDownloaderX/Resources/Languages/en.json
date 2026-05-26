@@ -47,7 +47,7 @@
     "searchingLabel":               "Searching…",
     "taggingOptionsLabel":          "TAGGING OPTIONS",
     "templatesLabel":               "TEMPLATES",
-    "templatesListLabel":           "TEMPLATES LIST",
+    "templatesListLabel":           "TEMPLATES LIST  (hover any field for variables)",
     "themeLabel":                   "Current Theme",
     "themeSectionLabel":            "VISUAL OPTIONS",
     "trackTemplateLabel":           "(DEFAULT) TRACK TEMPLATE",
@@ -216,8 +216,8 @@
     "tip5":                         "Tip #5: Did you know you can click on a cover in the downloader or searcher to view it in full size?",
     "tip6":                         "Tip #6: Did you know you can use a track or album ID in the searcher to get a single exact result?",
     "tip7":                         "Tip #7: Did you know you can open multiple instances of the program to download content in parallel and to different locations at the same time?",
-    "tip8":                         "Tip #8: Did you know that an album can contain songs with identical names? To avoid conflicts, don’t forget to use the %TrackNumber% or %TrackId% tags.",
-    "tip9":                         "Tip #9: Did you know you can create separate folders by artist, year, or record label using the download path templates? This way your library stays automatically organized.",
+    "tip8":                         "Tip #8: Did you know that an album can contain songs with identical names? To avoid conflicts, use the %tracknumber%, %trackid%, or %discnumber% tags. And if a track has an alternate mix, %trackversion% has you covered.",
+    "tip9":                         "Tip #9: Did you know you can organize your library into subfolders using %artistinitial%? Example: %artistinitial%\\%artistname%\\(%year%) %albumtitle%\\%tracknumber% - %tracktitle%. Perfect for A–Z browsing!",
     "tip10":                        "Tip #10: Did you know you can put your search terms in double quotes in the searcher to find results that exactly match the phrase?",
     "tip11":                        "Tip #11: Did you know you can disable these tips in the program’s advanced settings?",
     "tip12":                        "Tip #12: Did you know that talking to the album cover for 5 seconds before downloading it can help you burn about 0.08 calories to feel a little more muscular? 💪",
@@ -226,6 +226,7 @@
     "tip15":                        "Fun fact #2: Did you know that some people have died while using this program? 😱 … from boredom while waiting for a whole record label to fully download. 👻",
     "tip16":                        "Fun fact #3: Did you know that staring at the “Download” button for 10 seconds could make downloads go faster… in your imagination? 👀",
     "tip17":                        "Fun fact #4: Did you know that clapping after each successful download helps motivate the program for the next song? 👏",
-    "tip18":                        "Fun fact #5: Did you know that if you search for \"Terrorcore\" in the searcher, the authors of this program are not responsible for any brain or hearing damage it may cause you? 😵💉"
+    "tip18":                        "Fun fact #5: Did you know that if you search for \"Terrorcore\" in the searcher, the authors of this program are not responsible for any brain or hearing damage it may cause you? 😵💉",
+    "tip19":                        "Tip #12: Did you know the templates support many variables? Hover over any template field to see the full list — including %artistinitial%, %discnumber%, %trackversion%, %totaldiscs%, %totaltracks%, %albumdescription%, %label%, and more!"
 
 }

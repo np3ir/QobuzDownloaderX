@@ -198,6 +198,8 @@ namespace QobuzDownloaderX.Helpers
                     .Replace("%trackid%", QoItem.Id.ToString())
                     .Replace("%trackcomposer%", QoItem?.Composer?.Name?.ToString())
                     .Replace("%tracknumber%", QoItem.TrackNumber.ToString().PadLeft(paddedTrackLength, '0'))
+                    .Replace("%discnumber%", QoItem.MediaNumber.ToString().PadLeft(paddedDiscLength, '0'))
+                    .Replace("%trackversion%", QoItem.Version?.ToString() ?? "")
                     .Replace("%isrc%", QoItem.ISRC.ToString())
                     .Replace("%trackbitdepth%", QoItem.MaximumBitDepth.ToString())
                     .Replace("%tracksamplerate%", QoItem.MaximumSamplingRate.ToString());
@@ -228,10 +230,17 @@ namespace QobuzDownloaderX.Helpers
             if (QoAlbum != null)
             {
                 template = ReplaceParentalWarningTags(template, QoAlbum.ParentalWarning);
+
+                string albumArtistName = GetReleaseArtists(QoAlbum, updateAlbumInfoLabels: false) ?? "";
+                char initialChar = albumArtistName.Length > 0 ? char.ToUpper(albumArtistName[0]) : '#';
+                string artistInitial = char.IsDigit(initialChar) ? "#" : initialChar.ToString();
+
                 template = template
-                    .Replace("%albumid%", QoAlbum.Id?.ToString() ?? "")
+                    .Replace("%albumid%", QoAlbum.Id.ToString())
                     .Replace("%albumurl%", QoAlbum.Url?.ToString() ?? "")
-                    .Replace("%artistname%", GetReleaseArtists(QoAlbum, updateAlbumInfoLabels: false) ?? "")
+                    .Replace("%artistname%", albumArtistName)
+                    .Replace("%artistinitial%", artistInitial)
+                    .Replace("%artistid%", QoAlbum.Artist?.Id.ToString() ?? "")
                     .Replace("%albumgenre%", QoAlbum?.Genre?.Name ?? "")
                     .Replace("%albumcomposer%", QoAlbum?.Composer?.Name?.ToString() ?? "")
                     .Replace("%label%", spacesRegex.Replace(QoAlbum.Label?.Name ?? "", " "))
@@ -242,6 +251,9 @@ namespace QobuzDownloaderX.Helpers
                     .Replace("%releasetype%", char.ToUpper(QoAlbum.ProductType.FirstOrDefault()) + QoAlbum.ProductType?.Substring(1)?.ToLower())
                     .Replace("%bitdepth%", QoAlbum.MaximumBitDepth.ToString() ?? "")
                     .Replace("%samplerate%", QoAlbum.MaximumSamplingRate.ToString() ?? "")
+                    .Replace("%totaldiscs%", QoAlbum.MediaCount.ToString())
+                    .Replace("%totaltracks%", QoAlbum.TracksCount.ToString())
+                    .Replace("%albumdescription%", QoAlbum.Description ?? "")
                     .Replace("%albumtitle%", QoAlbum.Version == null ? QoAlbum.Title : $"{QoAlbum.Title?.TrimEnd()} ({QoAlbum.Version})")
                     .Replace("%format%", fileFormat.ToUpper().TrimStart('.'));
             }
@@ -308,7 +320,7 @@ namespace QobuzDownloaderX.Helpers
             char verticalBarChar = 'ǀ',
             char quoteChar = '″',
             char backSlashChar = '⧹',
-            char forwardSlashChar = '⧸',
+            char forwardSlashChar = '／',
             char lessThanChar = '˂',
             char greaterThanChar = '˃')
         {
