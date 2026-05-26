@@ -1966,7 +1966,7 @@ namespace QobuzDownloaderX
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = "https://github.com/ImAiiR/QobuzDownloaderX",
+                    FileName = "https://github.com/np3ir/QobuzDownloaderX",
                     UseShellExecute = true
                 });
             }

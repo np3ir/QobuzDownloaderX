@@ -30,17 +30,11 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
 
         public static string MergeFeaturedArtistsWithMainArtists(string[] mainArtists, string[] featuresArtists)
         {
-            string mergedMainArtists = MergeDoubleDelimitedList(mainArtists, primaryListSeparator, listEndSeparator);
-            string mergedFeaturedArtists = MergeDoubleDelimitedList(featuresArtists, primaryListSeparator, listEndSeparator);
+            if (featuresArtists == null || featuresArtists.Length == 0)
+                return MergeDoubleDelimitedList(mainArtists, primaryListSeparator, listEndSeparator);
 
-            if (string.IsNullOrEmpty(mergedFeaturedArtists))
-            {
-                return mergedMainArtists;
-            }
-            else
-            {
-                return $"{mergedMainArtists} Feat. {mergedFeaturedArtists}";
-            }
+            string[] allArtists = mainArtists.Concat(featuresArtists).ToArray();
+            return MergeDoubleDelimitedList(allArtists, primaryListSeparator, listEndSeparator);
         }
 
         // https://github.com/DJDoubleD/QobuzDownloaderX-MOD/blob/993c708f594faaab36ca4b3a97e4a7b84676ecf2/QobuzDownloaderX/Shared/Tools/StringTools.cs#L81

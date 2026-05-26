@@ -1,10 +1,10 @@
 <p style="align:center;">
-  <a href="https://github.com/ImAiiR/QobuzDownloaderX">
+  <a href="https://github.com/np3ir/QobuzDownloaderX">
     <img src="https://raw.githubusercontent.com/ImAiiR/QobuzDownloaderX/refs/heads/master/-assets/New-QBDLX.png" />
   </a>
 </p>
-<center><a href="https://www.buymeacoffee.com/ImAiiR" target="_blank"><img src="https://i.imgur.com/H2hMOg6.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a></center>
 
+> **Fork** of [ImAiiR/QobuzDownloaderX](https://github.com/ImAiiR/QobuzDownloaderX) with extra template variables, tiddl-style artist separator and improved tooltips.
 
 Inspired by Qo-DL by <a href="https://github.com/Sorrow446">Sorrow</a> & <a href="https://github.com/DashLt">Dash</a>
 

@@ -46,7 +46,7 @@ namespace QobuzDownloaderX.Helpers
                         string fileName = languageFile.Key;
                         string localFilePath = languageFile.Value;
 
-                        string apiUrl = $"https://api.github.com/repos/ImAiiR/QobuzDownloaderX/contents/QobuzDownloaderX/Resources/{localFilePath}";
+                        string apiUrl = $"https://api.github.com/repos/np3ir/QobuzDownloaderX/contents/QobuzDownloaderX/Resources/{localFilePath}";
 
                         try
                         {
@@ -149,7 +149,7 @@ namespace QobuzDownloaderX.Helpers
 
                     // Request the latest release from GitHub
                     qbdlxForm._qbdlxForm.logger.Debug("Requesting latest GitHub release");
-                    var versionUrl = "https://api.github.com/repos/ImAiiR/QobuzDownloaderX/releases/latest";
+                    var versionUrl = "https://api.github.com/repos/np3ir/QobuzDownloaderX/releases/latest";
                     var response = await httpClient.GetAsync(versionUrl);
                     string responseString = await response.Content.ReadAsStringAsync();
 

@@ -886,7 +886,7 @@ namespace QobuzDownloaderX
             {
                 // If "Yes" is clicked, open GitHub page and close QBDLX.
                 logger.Debug("Opening GitHub page for latest update");
-                Process.Start("https://github.com/ImAiiR/QobuzDownloaderX/releases/latest");
+                Process.Start("https://github.com/np3ir/QobuzDownloaderX/releases/latest");
                 logger.Debug("Exiting");
                 Application.Exit();
             }
