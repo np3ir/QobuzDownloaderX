@@ -4,6 +4,7 @@ using QopenAPI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -53,6 +54,30 @@ namespace QobuzDownloaderX.Helpers
             }
 
             return QoAlbum.Artist.Name;
+        }
+
+        /// <summary>
+        /// Returns the A-Z initial for the artist name, or "#" for digits, symbols,
+        /// and all non-Latin scripts (Cyrillic, CJK, Arabic, etc.).
+        /// Accented Latin letters are normalized: É→E, Ñ→N, Ü→U, etc.
+        /// Mirrors tiddl's get_alpha_bucket() behavior.
+        /// </summary>
+        private static string GetArtistInitial(string artistName)
+        {
+            if (string.IsNullOrWhiteSpace(artistName))
+                return "#";
+
+            // Decompose the first character (NFD strips combining marks: É → E + ́)
+            string firstUpper = artistName[0].ToString().ToUpperInvariant();
+            string decomposed = firstUpper.Normalize(NormalizationForm.FormD);
+            string baseChar = new string(decomposed
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray());
+
+            // Only A-Z (Basic Latin) get their own folder — everything else goes to #
+            return (baseChar.Length == 1 && baseChar[0] >= 'A' && baseChar[0] <= 'Z')
+                ? baseChar
+                : "#";
         }
 
         private string ReplaceParentalWarningTags(string template, bool isExplicit)
@@ -232,8 +257,7 @@ namespace QobuzDownloaderX.Helpers
                 template = ReplaceParentalWarningTags(template, QoAlbum.ParentalWarning);
 
                 string albumArtistName = GetReleaseArtists(QoAlbum, updateAlbumInfoLabels: false) ?? "";
-                char initialChar = albumArtistName.Length > 0 ? char.ToUpper(albumArtistName[0]) : '#';
-                string artistInitial = char.IsDigit(initialChar) ? "#" : initialChar.ToString();
+                string artistInitial = GetArtistInitial(albumArtistName);
 
                 template = template
                     .Replace("%albumid%", QoAlbum.Id.ToString())
