@@ -4,7 +4,7 @@
   </a>
 </p>
 
-> **Fork** of [ImAiiR/QobuzDownloaderX](https://github.com/ImAiiR/QobuzDownloaderX) with extra template variables, tiddl-style artist separator and improved tooltips.
+> **Fork** of [ImAiiR/QobuzDownloaderX](https://github.com/ImAiiR/QobuzDownloaderX) with extra template variables, djelvigilante-style artist separator and improved tooltips.
 
 Inspired by Qo-DL by <a href="https://github.com/Sorrow446">Sorrow</a> & <a href="https://github.com/DashLt">Dash</a>
 
