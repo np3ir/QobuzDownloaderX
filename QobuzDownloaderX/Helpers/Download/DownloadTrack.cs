@@ -197,6 +197,7 @@ namespace QobuzDownloaderX
                 }
                 catch (Exception downloadAlbumEx)
                 {
+                    qbdlxForm._qbdlxForm.logger.Error("Error during DownloadTrackAsync, error below:\r\n" + downloadAlbumEx);
                     getInfo.updateDownloadOutput("\r\n\r\n" + downloadAlbumEx + "\r\n\r\n");
                     Debug.WriteLine(downloadAlbumEx);
                     return;
@@ -211,6 +212,7 @@ namespace QobuzDownloaderX
             }
             catch (Exception downloadAlbumEx)
             {
+                qbdlxForm._qbdlxForm.logger.Error("Unhandled error during DownloadTrackAsync, error below:\r\n" + downloadAlbumEx);
                 Debug.WriteLine(downloadAlbumEx);
                 return;
             }
@@ -276,6 +278,7 @@ namespace QobuzDownloaderX
                 }
                 catch (Exception downloadAlbumEx)
                 {
+                    qbdlxForm._qbdlxForm.logger.Error("Error during DownloadPlaylistTrackAsync, error below:\r\n" + downloadAlbumEx);
                     getInfo.updateDownloadOutput("\r\n\r\n" + downloadAlbumEx + "\r\n\r\n");
                     Debug.WriteLine(downloadAlbumEx);
                     return;
@@ -284,6 +287,7 @@ namespace QobuzDownloaderX
             }
             catch (Exception downloadAlbumEx)
             {
+                qbdlxForm._qbdlxForm.logger.Error("Unhandled error during DownloadPlaylistTrackAsync, error below:\r\n" + downloadAlbumEx);
                 Debug.WriteLine(downloadAlbumEx);
                 return;
             }
