@@ -53,7 +53,7 @@ namespace QobuzDownloaderX
 
         private void CleanupArtwork()
         {
-            string artworkPath = downloadFile.embeddedArtworkPath;
+            string artworkPath = Path.Combine(Path.GetTempPath(), qbdlxForm._qbdlxForm.embeddedArtSize + ".jpg");
             if (ZlpIOHelper.FileExists(artworkPath))
             {
                 ZlpIOHelper.DeleteFile(artworkPath);
@@ -74,7 +74,7 @@ namespace QobuzDownloaderX
             }
         }
 
-        private async Task DownloadAndSaveTrack(string downloadType, string app_id, string format_id, string user_auth_token, string app_secret, Album QoAlbum, Item QoItem, Playlist QoPlaylist, string downloadPath, string filePath, string audio_format, int paddedTrackLength, DownloadStats stats, CancellationToken abortToken)
+        private async Task DownloadAndSaveTrack(string downloadType, string app_id, string format_id, string user_auth_token, string app_secret, Album QoAlbum, Item QoItem, Playlist QoPlaylist, string downloadPath, string filePath, string audio_format, string embeddedArtworkPath, int paddedTrackLength, DownloadStats stats, CancellationToken abortToken)
         {
             var QoStream = QoService.TrackGetFileUrl(QoItem.Id.ToString(), format_id, app_id, user_auth_token, app_secret);
             string streamURL = QoStream?.StreamURL;
@@ -98,7 +98,7 @@ namespace QobuzDownloaderX
             if (abortToken.IsCancellationRequested) { abortToken.ThrowIfCancellationRequested(); }
 
             // Download stream
-            await downloadFile.DownloadStream(downloadType, streamURL, downloadPath, filePath, audio_format, QoAlbum, QoItem, getInfo, abortToken, stats);
+            await downloadFile.DownloadStream(downloadType, streamURL, downloadPath, filePath, audio_format, embeddedArtworkPath, QoAlbum, QoItem, getInfo, abortToken, stats);
         }
 
         public async Task DownloadTrackAsync(string downloadType, string app_id, string album_id, string format_id, string audio_format, string user_auth_token, string app_secret, string downloadLocation, string artistTemplate, string albumTemplate, string trackTemplate, Album QoAlbum, Item QoItem, IProgress<int> progress, DownloadStats stats, CancellationToken abortToken)
@@ -179,10 +179,11 @@ namespace QobuzDownloaderX
                     }
 
                     // Download cover art
-                    try { await downloadFile.DownloadArtwork(downloadPath, QoAlbum); } catch (Exception ex) { qbdlxForm._qbdlxForm.logger.Error($"Failed to Download Cover Art. Error below:\r\n{ex}"); }
+                    string embeddedArtPath = "";
+                    try { embeddedArtPath = await downloadFile.DownloadArtwork(downloadPath, QoAlbum); } catch (Exception ex) { qbdlxForm._qbdlxForm.logger.Error($"Failed to Download Cover Art. Error below:\r\n{ex}"); }
 
                     // Download and Save Track
-                    await DownloadAndSaveTrack(downloadType, app_id, format_id, user_auth_token, app_secret, QoAlbum, QoItem, null, downloadPath, filePath, audio_format, paddedTrackLength, stats, abortToken);
+                    await DownloadAndSaveTrack(downloadType, app_id, format_id, user_auth_token, app_secret, QoAlbum, QoItem, null, downloadPath, filePath, audio_format, embeddedArtPath, paddedTrackLength, stats, abortToken);
 
                     if (abortToken.IsCancellationRequested) { abortToken.ThrowIfCancellationRequested(); }
                     progress?.Report(100);
@@ -255,14 +256,15 @@ namespace QobuzDownloaderX
                     }
 
                     // Download cover art
+                    string embeddedArtPath = "";
                     try
                     {
-                        await downloadFile.DownloadArtwork(downloadPath, QoAlbum);
+                        embeddedArtPath = await downloadFile.DownloadArtwork(downloadPath, QoAlbum);
                     }
                     catch (Exception ex) { qbdlxForm._qbdlxForm.logger.Error($"Failed to download cover art for playlist track. Error:\r\n{ex}"); }
 
                     // Download and Save Track
-                    await DownloadAndSaveTrack(downloadType, app_id, format_id, user_auth_token, app_secret, QoAlbum, QoItem, QoPlaylist, downloadPath, filePath, audio_format, paddedTrackLength, stats, abortToken);
+                    await DownloadAndSaveTrack(downloadType, app_id, format_id, user_auth_token, app_secret, QoAlbum, QoItem, QoPlaylist, downloadPath, filePath, audio_format, embeddedArtPath, paddedTrackLength, stats, abortToken);
 
                     // Delete image used for embedded artwork
                     CleanupArtwork();

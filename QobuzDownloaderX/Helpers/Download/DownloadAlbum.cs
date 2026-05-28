@@ -35,7 +35,7 @@ namespace QobuzDownloaderX
             try
             {
                 qbdlxForm._qbdlxForm.logger.Debug("Downloading artwork…");
-                await downloadFile.DownloadArtwork(downloadPath, album);
+                await downloadFile.DownloadArtwork(downloadPath, album); // returned path used per-track in DownloadTrack
                 qbdlxForm._qbdlxForm.logger.Debug("Artwork download complete");
             }
             catch (Exception ex)

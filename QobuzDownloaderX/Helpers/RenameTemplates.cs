@@ -101,6 +101,12 @@ namespace QobuzDownloaderX.Helpers
 
         private string ReplaceParentalWarningTags(string template, bool isExplicit)
         {
+            // Fast path: skip all 36 Replace() calls when the template contains no PA tags.
+            // IndexOf with Ordinal is the fastest string scan available in .NET.
+            if (template.IndexOf("%trackpa", StringComparison.Ordinal) < 0 &&
+                template.IndexOf("%albumpa", StringComparison.Ordinal) < 0)
+                return template;
+
             template = template.Replace("%trackpa%", isExplicit ? "Explicit" : "Clean");
             template = template.Replace("%trackpashort%", isExplicit ? "E" : "C");
             template = template.Replace("%trackpaifex%", isExplicit ? "Explicit" : "");

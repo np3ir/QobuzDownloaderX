@@ -31,8 +31,6 @@ namespace QobuzDownloaderX
         // Static flag to ensure temp directory check runs only once per application run
         private static bool tempDirChecked = false;
 
-        public string embeddedArtworkPath { get; set; }
-
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "trackTemplate and favoritesTemplate are not needed for the path but kept for API consistency")]
         public Task<string> createPath(string downloadLocation, string artistTemplate, string albumTemplate, string trackTemplate, string playlistTemplate, string favoritesTemplate, int paddedTrackLength, int paddedDiscLength, Album QoAlbum, Item QoItem, Playlist QoPlaylist)
         {
@@ -54,7 +52,7 @@ namespace QobuzDownloaderX
             return Task.FromResult(downloadPath);
         }
 
-        public async Task DownloadStream(string downloadType, string streamUrl, string downloadPath, string filePath, string audio_format, Album QoAlbum, Item QoItem, GetInfo getInfo, CancellationToken abortToken, DownloadStats stats)
+        public async Task DownloadStream(string downloadType, string streamUrl, string downloadPath, string filePath, string audio_format, string embeddedArtworkPath, Album QoAlbum, Item QoItem, GetInfo getInfo, CancellationToken abortToken, DownloadStats stats)
         {
             const string tempDir = @"qbdlx-temp";
             string tempFile = ZlpPathHelper.Combine(tempDir, $"qbdlx_downloading-{QoItem.Id}{audio_format}");
@@ -96,8 +94,6 @@ namespace QobuzDownloaderX
                 qbdlxForm._qbdlxForm.BeginInvoke(new Action(() => { qbdlxForm._qbdlxForm.progressLabel.Text = $"{qbdlxForm._qbdlxForm.progressLabelActive} - 0%"; }));
             }
 
-            // Set path for downloaded embedded artwork
-            embeddedArtworkPath = Path.Combine(Path.GetTempPath(), qbdlxForm._qbdlxForm.embeddedArtSize + ".jpg");
             qbdlxForm._qbdlxForm.logger.Debug("Embedded artwork path: " + embeddedArtworkPath);
 
             // Handle subfolders if more than 1 volume
@@ -335,8 +331,14 @@ namespace QobuzDownloaderX
             }
         }
 
-        public async Task DownloadArtwork(string downloadPath, Album QoAlbum)
+        /// <summary>
+        /// Downloads album artwork (saved cover + embedded temp copy).
+        /// Returns the path to the embedded artwork file in the system temp directory.
+        /// </summary>
+        public async Task<string> DownloadArtwork(string downloadPath, Album QoAlbum)
         {
+            string embeddedArtworkPath = Path.Combine(Path.GetTempPath(), qbdlxForm._qbdlxForm.embeddedArtSize + ".jpg");
+
             // Download cover art to the download path
             using (var httpClient = new HttpClient { Timeout = artworkDownloadCompletionTimeout })
             using (var downloadTimeoutCts = new CancellationTokenSource(artworkDownloadCompletionTimeout))
@@ -399,7 +401,6 @@ namespace QobuzDownloaderX
                 }
 
                 // Embedded art (TEMP directory)
-                embeddedArtworkPath = Path.Combine(Path.GetTempPath(), qbdlxForm._qbdlxForm.embeddedArtSize + ".jpg");
                 if (!File.Exists(embeddedArtworkPath))
                 {
                     qbdlxForm._qbdlxForm.logger.Debug("Embedded artwork not found in temp directory, downloading");
@@ -408,6 +409,8 @@ namespace QobuzDownloaderX
                     await DownloadWithTimeoutAsync(url, embeddedArtworkPath);
                 }
             }
+
+            return embeddedArtworkPath;
         }
 
         public async Task DownloadGoody(string downloadPath, Album QoAlbum, Goody QoGoody, GetInfo getInfo, CancellationToken abortToken)
