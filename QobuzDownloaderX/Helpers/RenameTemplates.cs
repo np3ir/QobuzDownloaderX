@@ -20,6 +20,8 @@ namespace QobuzDownloaderX.Helpers
         internal static readonly Regex spacesRegex = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         internal static readonly Regex repeatedParenthesesRegex = new Regex(@"\(([^()]+)\)\s*(\(\1\))+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex spacesBeforeBackslashRegex = new Regex(@"\s+\\", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        // Cached once — this array never changes at runtime
+        private static readonly char[] _invalidFileNameChars = Path.GetInvalidFileNameChars();
 
         // "Various Artists" known variations
         readonly string[] variousArtistsNames = new[]
@@ -376,7 +378,7 @@ namespace QobuzDownloaderX.Helpers
             if (string.IsNullOrWhiteSpace(fileName))
                 return fileName;
 
-            char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+            char[] invalidFileNameChars = _invalidFileNameChars;
 
             if (invalidFileNameChars.Contains(asteriskChar))
                 throw new ArgumentException($"Invalid replacement character for {nameof(asteriskChar)}.", nameof(asteriskChar));

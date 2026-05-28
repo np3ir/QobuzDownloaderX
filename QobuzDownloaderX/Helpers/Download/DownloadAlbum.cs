@@ -154,7 +154,7 @@ namespace QobuzDownloaderX
             {
                 // Find the how many characters are needed for padding
                 paddedTrackLength = padNumber.padTracks(QoAlbum);
-                paddedDiscLength = padNumber.padTracks(QoAlbum);
+                paddedDiscLength = padNumber.padDiscs(QoAlbum);
 
                 // Set download path
                 downloadPath = await downloadFile.createPath(downloadLocation, artistTemplate, albumTemplate, trackTemplate, null, null, paddedTrackLength, paddedDiscLength, QoAlbum, null, null);
