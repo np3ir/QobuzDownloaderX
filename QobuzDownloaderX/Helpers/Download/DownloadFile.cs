@@ -28,6 +28,10 @@ namespace QobuzDownloaderX
         private readonly TimeSpan mp3TrackDownloadCompletionTimeout = TimeSpan.FromMinutes(5);
         private readonly TimeSpan flacTrackDownloadCompletionTimeout = TimeSpan.FromMinutes(10);
 
+        // Shared across all download operations — never disposed; single instance avoids socket exhaustion.
+        // Per-operation timeouts are enforced exclusively through CancellationTokenSource, so Timeout.InfiniteTimeSpan is safe here.
+        private static readonly HttpClient _httpClient = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
+
         // Static flag to ensure temp directory check runs only once per application run
         private static bool tempDirChecked = false;
 
@@ -125,8 +129,9 @@ namespace QobuzDownloaderX
                     ? mp3TrackDownloadCompletionTimeout
                     : flacTrackDownloadCompletionTimeout;
 
-                using (var httpClient = new HttpClient { Timeout = selectedTimeout })
-                using (var response = await httpClient.GetAsync(streamUrl, HttpCompletionOption.ResponseHeadersRead))
+                // Hoist total timeout before GetAsync so the headers-read phase is also covered
+                using (var downloadTimeoutCts = new CancellationTokenSource(selectedTimeout)) // Total download timeout
+                using (var response = await _httpClient.GetAsync(streamUrl, HttpCompletionOption.ResponseHeadersRead, downloadTimeoutCts.Token))
                 {
                     response.EnsureSuccessStatusCode();
 
@@ -146,27 +151,28 @@ namespace QobuzDownloaderX
                     // Open file stream for writing and get the HTTP response stream
                     using (var fs = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.Read, bufferLength, useAsync: true))
                     using (var stream = await response.Content.ReadAsStreamAsync())
-                    using (var downloadTimeoutCts = new CancellationTokenSource(selectedTimeout)) // Total download timeout
                     {
                         if (stats?.SpeedWatch != null && !stats.SpeedWatch.IsRunning) stats.SpeedWatch.Start();
-                       
-                        int bytesRead;
-                        while (true)
-                        {
-                            if (abortToken.IsCancellationRequested) { abortToken.ThrowIfCancellationRequested(); }
 
-                            using (var readTimeoutCts = new CancellationTokenSource(dataReceiveTimeout)) // Timeout if no data is received
-                            using (var readTimeoutLinkedCts = CancellationTokenSource.CreateLinkedTokenSource(downloadTimeoutCts.Token, readTimeoutCts.Token))
+                        int bytesRead;
+                        using (var readInactivityCts = new CancellationTokenSource())
+                        using (var readLinkedCts = CancellationTokenSource.CreateLinkedTokenSource(downloadTimeoutCts.Token, readInactivityCts.Token))
+                        {
+                            while (true)
                             {
+                                if (abortToken.IsCancellationRequested) { abortToken.ThrowIfCancellationRequested(); }
+                                readInactivityCts.CancelAfter(dataReceiveTimeout); // Arm inactivity timeout before each read
+
                                 // Read from the stream with the linked token (total + inactivity timeout)
                                 stats?.SpeedWatch?.Stop();
-                                bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, readTimeoutLinkedCts.Token);
+                                bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, readLinkedCts.Token);
                                 if (bytesRead == 0) break; // End of stream
+                                readInactivityCts.CancelAfter(Timeout.InfiniteTimeSpan); // Disarm after successful read
 
                                 if (stats?.SpeedWatch != null && !stats.SpeedWatch.IsRunning) stats.SpeedWatch.Start();
 
                                 // Write the bytes to the file stream using the same linked token
-                                await fs.WriteAsync(buffer, 0, bytesRead, readTimeoutLinkedCts.Token);
+                                await fs.WriteAsync(buffer, 0, bytesRead, readLinkedCts.Token);
                                 totalBytesRead += bytesRead;
 
                                 if (stats != null)
@@ -212,7 +218,7 @@ namespace QobuzDownloaderX
                                         qbdlxForm._qbdlxForm.progressLabel.Text =
                                             $"{qbdlxForm._qbdlxForm.progressLabelActive} - {progressPercentage}%"));
                                 }
-                            } 
+                            }
                         }
                         stats?.SpeedWatch?.Stop();
                     }
@@ -340,7 +346,6 @@ namespace QobuzDownloaderX
             string embeddedArtworkPath = Path.Combine(Path.GetTempPath(), qbdlxForm._qbdlxForm.embeddedArtSize + ".jpg");
 
             // Download cover art to the download path
-            using (var httpClient = new HttpClient { Timeout = artworkDownloadCompletionTimeout })
             using (var downloadTimeoutCts = new CancellationTokenSource(artworkDownloadCompletionTimeout))
             {
                 qbdlxForm._qbdlxForm.logger.Debug("Downloading Cover Art");
@@ -351,7 +356,7 @@ namespace QobuzDownloaderX
                 {
                     try
                     {
-                        using (var response = await httpClient.GetAsync(
+                        using (var response = await _httpClient.GetAsync(
                             url,
                             HttpCompletionOption.ResponseHeadersRead,
                             downloadTimeoutCts.Token))
@@ -363,17 +368,18 @@ namespace QobuzDownloaderX
                             using (var fs = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.Read))
                             {
                                 int bytesRead;
-
-                                while (true)
+                                using (var readInactivityCts = new CancellationTokenSource())
+                                using (var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+                                    downloadTimeoutCts.Token,
+                                    readInactivityCts.Token))
                                 {
-                                    using (var readTimeoutCts = new CancellationTokenSource(dataReceiveTimeout))
-                                    using (var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
-                                        downloadTimeoutCts.Token,
-                                        readTimeoutCts.Token))
+                                    while (true)
                                     {
+                                        readInactivityCts.CancelAfter(dataReceiveTimeout); // Arm inactivity timeout before each read
                                         bytesRead = await httpStream.ReadAsync(buffer, 0, buffer.Length, linkedCts.Token);
                                         if (bytesRead <= 0)
                                             break;
+                                        readInactivityCts.CancelAfter(Timeout.InfiniteTimeSpan); // Disarm after successful read
 
                                         await fs.WriteAsync(buffer, 0, bytesRead, linkedCts.Token);
                                     }
@@ -430,43 +436,41 @@ namespace QobuzDownloaderX
 
             try
             {
-                using (var httpClient = new HttpClient { Timeout = goodyDownloadCompletionTimeout })
+                // Global download timeout (total operation)
+                using (var downloadTimeoutCts = new CancellationTokenSource(goodyDownloadCompletionTimeout))
                 {
-                    // Global download timeout (total operation)
-                    using (var downloadTimeoutCts = new CancellationTokenSource(goodyDownloadCompletionTimeout))
+                    getInfo.updateDownloadOutput($"{qbdlxForm._qbdlxForm.downloadOutputGoodyFound} ");
+                    qbdlxForm._qbdlxForm.logger.Debug("Downloading goody…");
+
+                    int bufferLength = 81920; // 80 kb - Stream.cs: const int DefaultCopyBufferSize = 81920
+                    var buffer = new byte[bufferLength];
+
+                    using (var response = await _httpClient.GetAsync(
+                        QoGoody.Url,
+                        HttpCompletionOption.ResponseHeadersRead,
+                        downloadTimeoutCts.Token))
                     {
-                        getInfo.updateDownloadOutput($"{qbdlxForm._qbdlxForm.downloadOutputGoodyFound} ");
-                        qbdlxForm._qbdlxForm.logger.Debug("Downloading goody…");
+                        response.EnsureSuccessStatusCode();
 
-                        int bufferLength = 81920; // 80 kb - Stream.cs: const int DefaultCopyBufferSize = 81920
-                        var buffer = new byte[bufferLength];
-
-                        using (var response = await httpClient.GetAsync(
-                            QoGoody.Url,
-                            HttpCompletionOption.ResponseHeadersRead,
-                            downloadTimeoutCts.Token))
+                        using (var httpStream = await response.Content.ReadAsStreamAsync())
+                        using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
                         {
-                            response.EnsureSuccessStatusCode();
-
-                            using (var httpStream = await response.Content.ReadAsStreamAsync())
-                            using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+                            int bytesRead;
+                            using (var readInactivityCts = new CancellationTokenSource())
+                            using (var readLinkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+                                downloadTimeoutCts.Token,
+                                readInactivityCts.Token))
                             {
-                                int bytesRead;
-
                                 while (true)
                                 {
                                     // Per-read inactivity timeout (no data received)
-                                    using (var readTimeoutCts = new CancellationTokenSource(dataReceiveTimeout))
-                                    using (var readTimeoutLinkedCts = CancellationTokenSource.CreateLinkedTokenSource(
-                                        downloadTimeoutCts.Token,
-                                        readTimeoutCts.Token))
-                                    {
-                                        bytesRead = await httpStream.ReadAsync(buffer, 0, buffer.Length, readTimeoutLinkedCts.Token);
-                                        if (bytesRead <= 0)
-                                            break;
+                                    readInactivityCts.CancelAfter(dataReceiveTimeout); // Arm inactivity timeout before each read
+                                    bytesRead = await httpStream.ReadAsync(buffer, 0, buffer.Length, readLinkedCts.Token);
+                                    if (bytesRead <= 0)
+                                        break;
+                                    readInactivityCts.CancelAfter(Timeout.InfiniteTimeSpan); // Disarm after successful read
 
-                                        await fileStream.WriteAsync(buffer, 0, bytesRead, readTimeoutLinkedCts.Token);
-                                    }
+                                    await fileStream.WriteAsync(buffer, 0, bytesRead, readLinkedCts.Token);
                                 }
                             }
                         }
