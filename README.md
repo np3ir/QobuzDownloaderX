@@ -1,6 +1,6 @@
-<p style="align:center;">
+<p align="center">
   <a href="https://github.com/np3ir/QobuzDownloaderX">
-    <img src="https://raw.githubusercontent.com/ImAiiR/QobuzDownloaderX/refs/heads/master/-assets/New-QBDLX.png" />
+    <img src="https://raw.githubusercontent.com/np3ir/QobuzDownloaderX/master/-assets/banner.png" />
   </a>
 </p>
 
