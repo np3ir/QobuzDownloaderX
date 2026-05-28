@@ -213,7 +213,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="savedCdTemplate" Type="System.String" Scope="User">
-      <Value Profile="(Default)">CD 0%DiscNumber%</Value>
+      <Value Profile="(Default)">Disc %DiscNumber%</Value>
     </Setting>
     <Setting Name="mergeArtistNamesInDirectoryNamesToo" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

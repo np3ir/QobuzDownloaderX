@@ -865,7 +865,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("CD 0%DiscNumber%")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Disc %DiscNumber%")]
         public string savedCdTemplate {
             get {
                 return ((string)(this["savedCdTemplate"]));
