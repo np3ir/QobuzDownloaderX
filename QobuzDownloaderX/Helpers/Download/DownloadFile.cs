@@ -235,27 +235,20 @@ namespace QobuzDownloaderX
 
                 // Move the file to final destination
                 qbdlxForm._qbdlxForm.logger.Debug("Moving temp file to - " + filePath);
-                try
+                if (qbdlxForm.duplicateFileMode != DuplicateFileMode.AutoRename)
                 {
-                    if (qbdlxForm.duplicateFileMode != DuplicateFileMode.AutoRename)
-                    {
-                        ZlpIOHelper.MoveFile(tempFile, filePath, overwriteExisting: qbdlxForm.duplicateFileMode == DuplicateFileMode.OverwriteExistingFiles);
-                    }
-                    else
-                    {
-                        string dir = Path.GetDirectoryName(filePath);
-                        string name = Path.GetFileNameWithoutExtension(filePath);
-                        string safeNameTruncated = RenameTemplates.TruncateLongName(name, (Byte)" (999)".Length);
-                        string ext = Path.GetExtension(filePath);
-                        string safeFullPathTruncated = Path.Combine(dir, name + ext);
-
-                        string duplicateFileName = Miscellaneous.GetDuplicateFileName(safeFullPathTruncated);
-                        ZlpIOHelper.MoveFile(tempFile, duplicateFileName, overwriteExisting: true);
-                    }
+                    ZlpIOHelper.MoveFile(tempFile, filePath, overwriteExisting: qbdlxForm.duplicateFileMode == DuplicateFileMode.OverwriteExistingFiles);
                 }
-                catch
+                else
                 {
-                    throw;
+                    string dir = Path.GetDirectoryName(filePath);
+                    string name = Path.GetFileNameWithoutExtension(filePath);
+                    string safeNameTruncated = RenameTemplates.TruncateLongName(name, (Byte)" (999)".Length);
+                    string ext = Path.GetExtension(filePath);
+                    string safeFullPathTruncated = Path.Combine(dir, name + ext);
+
+                    string duplicateFileName = Miscellaneous.GetDuplicateFileName(safeFullPathTruncated);
+                    ZlpIOHelper.MoveFile(tempFile, duplicateFileName, overwriteExisting: true);
                 }
 
                 qbdlxForm._qbdlxForm.logger.Debug("DownloadStream complete.");
