@@ -445,7 +445,7 @@ namespace QobuzDownloaderX.Helpers
 
         public void updateDownloadOutput(string text)
         {
-            if (outputText == "Test String" | outputText == null)
+            if (outputText == "Test String" || outputText == null)
             {
                 Miscellaneous.update(qbdlxForm._qbdlxForm, null);
                 outputText = qbdlxForm._qbdlxForm.downloadOutput.Text;

@@ -259,7 +259,7 @@ namespace QobuzDownloaderX
                     {
                         await downloadFile.DownloadArtwork(downloadPath, QoAlbum);
                     }
-                    catch { }
+                    catch (Exception ex) { qbdlxForm._qbdlxForm.logger.Error($"Failed to download cover art for playlist track. Error:\r\n{ex}"); }
 
                     // Download and Save Track
                     await DownloadAndSaveTrack(downloadType, app_id, format_id, user_auth_token, app_secret, QoAlbum, QoItem, QoPlaylist, downloadPath, filePath, audio_format, paddedTrackLength, stats, abortToken);

@@ -33,28 +33,25 @@ namespace QobuzDownloaderX
 
         public string embeddedArtworkPath { get; set; }
 
-        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "I don’t feel like changing this and it doesn’t matter")]
-        public async Task<string> createPath(string downloadLocation, string artistTemplate, string albumTemplate, string trackTemplate, string playlistTemplate, string favoritesTemplate, int paddedTrackLength, int paddedDiscLength, Album QoAlbum, Item QoItem, Playlist QoPlaylist)
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "trackTemplate and favoritesTemplate are not needed for the path but kept for API consistency")]
+        public Task<string> createPath(string downloadLocation, string artistTemplate, string albumTemplate, string trackTemplate, string playlistTemplate, string favoritesTemplate, int paddedTrackLength, int paddedDiscLength, Album QoAlbum, Item QoItem, Playlist QoPlaylist)
         {
-            return await Task.Run(() =>
+            string downloadPath;
+            if (QoPlaylist == null)
             {
-                string downloadPath;
-                if (QoPlaylist == null)
-                {
-                    qbdlxForm._qbdlxForm.logger.Debug("Using non-playlist path");
-                    string artistTemplateConverted = renameTemplates.renameTemplates(artistTemplate, paddedTrackLength, paddedDiscLength, qbdlxForm._qbdlxForm.audio_format, QoAlbum, null, null);
-                    string albumTemplateConverted = renameTemplates.renameTemplates(albumTemplate, paddedTrackLength, paddedDiscLength, qbdlxForm._qbdlxForm.audio_format, QoAlbum, null, null);
-                    downloadPath = ZlpPathHelper.Combine(downloadLocation, artistTemplateConverted, albumTemplateConverted.TrimEnd(ZlpPathHelper.DirectorySeparatorChar) + ZlpPathHelper.DirectorySeparatorChar);                    
-                }
-                else
-                {
-                    qbdlxForm._qbdlxForm.logger.Debug("Using playlist path");
-                    string playlistTemplateConverted = renameTemplates.renameTemplates(playlistTemplate, paddedTrackLength, paddedDiscLength, qbdlxForm._qbdlxForm.audio_format, QoAlbum, QoItem, QoPlaylist);
-                    downloadPath = ZlpPathHelper.Combine(downloadLocation, playlistTemplateConverted.TrimEnd(ZlpPathHelper.DirectorySeparatorChar) + ZlpPathHelper.DirectorySeparatorChar);
-                }
-                downloadPath = RenameTemplates.spacesRegex.Replace(downloadPath, " "); // Remove double spaces
-                return downloadPath;
-            });
+                qbdlxForm._qbdlxForm.logger.Debug("Using non-playlist path");
+                string artistTemplateConverted = renameTemplates.renameTemplates(artistTemplate, paddedTrackLength, paddedDiscLength, qbdlxForm._qbdlxForm.audio_format, QoAlbum, null, null);
+                string albumTemplateConverted = renameTemplates.renameTemplates(albumTemplate, paddedTrackLength, paddedDiscLength, qbdlxForm._qbdlxForm.audio_format, QoAlbum, null, null);
+                downloadPath = ZlpPathHelper.Combine(downloadLocation, artistTemplateConverted, albumTemplateConverted.TrimEnd(ZlpPathHelper.DirectorySeparatorChar) + ZlpPathHelper.DirectorySeparatorChar);
+            }
+            else
+            {
+                qbdlxForm._qbdlxForm.logger.Debug("Using playlist path");
+                string playlistTemplateConverted = renameTemplates.renameTemplates(playlistTemplate, paddedTrackLength, paddedDiscLength, qbdlxForm._qbdlxForm.audio_format, QoAlbum, QoItem, QoPlaylist);
+                downloadPath = ZlpPathHelper.Combine(downloadLocation, playlistTemplateConverted.TrimEnd(ZlpPathHelper.DirectorySeparatorChar) + ZlpPathHelper.DirectorySeparatorChar);
+            }
+            downloadPath = RenameTemplates.spacesRegex.Replace(downloadPath, " "); // Remove double spaces
+            return Task.FromResult(downloadPath);
         }
 
         public async Task DownloadStream(string downloadType, string streamUrl, string downloadPath, string filePath, string audio_format, Album QoAlbum, Item QoItem, GetInfo getInfo, CancellationToken abortToken, DownloadStats stats)

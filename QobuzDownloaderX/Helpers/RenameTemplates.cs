@@ -56,6 +56,25 @@ namespace QobuzDownloaderX.Helpers
             return QoAlbum.Artist.Name;
         }
 
+        /// Returns the four-digit year string extracted from a Qobuz release date.
+        /// Returns "" if the date is null, empty, or shorter than 4 characters.
+        /// </summary>
+        private static string SafeYear(string releaseDate)
+        {
+            var s = releaseDate?.Trim();
+            return s != null && s.Length >= 4 ? s.Substring(0, 4) : "";
+        }
+
+        /// <summary>
+        /// Returns the input string with the first character uppercased and the rest lowercased.
+        /// Returns "" for null or empty input.
+        /// </summary>
+        private static string CapitalizeFirst(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return "";
+            return char.ToUpper(s[0]) + (s.Length > 1 ? s.Substring(1).ToLower() : "");
+        }
+
         /// <summary>
         /// Returns the A-Z initial for the artist name, or "#" for digits, symbols,
         /// and all non-Latin scripts (Cyrillic, CJK, Arabic, etc.).
@@ -271,8 +290,8 @@ namespace QobuzDownloaderX.Helpers
                     .Replace("%copyright%", QoAlbum.Copyright ?? "")
                     .Replace("%upc%", QoAlbum.UPC ?? "")
                     .Replace("%releasedate%", QoAlbum.ReleaseDateOriginal?.Trim() ?? "")
-                    .Replace("%year%", UInt32.Parse(QoAlbum.ReleaseDateOriginal?.Trim()?.Substring(0, 4)).ToString() ?? "")
-                    .Replace("%releasetype%", char.ToUpper(QoAlbum.ProductType.FirstOrDefault()) + QoAlbum.ProductType?.Substring(1)?.ToLower())
+                    .Replace("%year%", SafeYear(QoAlbum.ReleaseDateOriginal))
+                    .Replace("%releasetype%", CapitalizeFirst(QoAlbum.ProductType))
                     .Replace("%bitdepth%", QoAlbum.MaximumBitDepth.ToString() ?? "")
                     .Replace("%samplerate%", QoAlbum.MaximumSamplingRate.ToString() ?? "")
                     .Replace("%totaldiscs%", QoAlbum.MediaCount.ToString())
@@ -310,8 +329,8 @@ namespace QobuzDownloaderX.Helpers
                         .Replace("%copyright%", QoAlbum.Copyright ?? "")
                         .Replace("%upc%", QoAlbum.UPC ?? "")
                         .Replace("%releasedate%", QoAlbum.ReleaseDateOriginal?.Trim() ?? "")
-                        .Replace("%year%", UInt32.Parse(QoAlbum.ReleaseDateOriginal?.Trim()?.Substring(0, 4)).ToString() ?? "")
-                        .Replace("%releasetype%", char.ToUpper(QoAlbum.ProductType.FirstOrDefault()) + QoAlbum.ProductType?.Substring(1)?.ToLower())
+                        .Replace("%year%", SafeYear(QoAlbum.ReleaseDateOriginal))
+                        .Replace("%releasetype%", CapitalizeFirst(QoAlbum.ProductType))
                         .Replace("%bitdepth%", QoAlbum.MaximumBitDepth.ToString() ?? "")
                         .Replace("%samplerate%", QoAlbum.MaximumSamplingRate.ToString() ?? "")
                         .Replace("%albumtitle%", QoAlbum.Version == null ? QoAlbum.Title : $"{QoAlbum.Title?.TrimEnd()} ({QoAlbum.Version})")
@@ -404,9 +423,6 @@ namespace QobuzDownloaderX.Helpers
 
             if (string.IsNullOrEmpty(name))
                 return name;
-
-            if (maxFileNameLength == 0)
-                throw new ArgumentException("Value must be greater than zero.", nameof(maxFileNameLength));
 
             if (maxFileNameLength == 0)
                 throw new ArgumentException("Value must be greater than zero.", nameof(maxFileNameLength));
