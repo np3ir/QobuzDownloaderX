@@ -53,11 +53,9 @@ namespace QobuzDownloaderX
 
         private void CleanupArtwork()
         {
-            string artworkPath = Path.Combine(Path.GetTempPath(), qbdlxForm._qbdlxForm.embeddedArtSize + ".jpg");
-            if (ZlpIOHelper.FileExists(artworkPath))
-            {
-                ZlpIOHelper.DeleteFile(artworkPath);
-            }
+            // Delegate to the shared helper that wraps the delete in try/catch.
+            // A locked file (e.g. AV scan in progress) must not abort the playlist download.
+            Miscellaneous.DeleteTempEmbeddedArtwork();
         }
 
         private void CreatePadding(Album QoAlbum, Playlist QoPlaylist)
