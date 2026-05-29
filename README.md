@@ -20,6 +20,11 @@ QobuzDownloaderX is a program for downloading music streams from the streaming p
 
 You can not download anything with a free account.
 
+> **Windows SmartScreen warning:** Windows may block the app on first run because it is not code-signed.
+> To fix this, **right-click the ZIP → Properties → check "Unblock" → OK**, then extract.
+> Or after extracting, right-click `QobuzDownloaderX.exe` → Properties → check "Unblock" → OK.
+> Alternatively, click **"More info" → "Run anyway"** in the SmartScreen dialog.
+
 # Disclaimer & Legal
 I will not be responsible for how you use QBDLX (QobuzDownloaderX). 
 
