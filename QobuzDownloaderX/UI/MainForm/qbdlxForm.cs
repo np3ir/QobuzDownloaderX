@@ -1287,6 +1287,12 @@ namespace QobuzDownloaderX
             Miscellaneous.SetTLSSetting();
         }
 
+        private void downloadDelayNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            Settings.Default.downloadDelayMs = (int)downloadDelayNumericUpDown.Value;
+            Settings.Default.Save();
+        }
+
         private void downloadGoodiesCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             Settings.Default.downloadGoodies = downloadGoodiesCheckBox.Checked;

@@ -685,6 +685,18 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int downloadDelayMs {
+            get {
+                return ((int)(this["downloadDelayMs"]));
+            }
+            set {
+                this["downloadDelayMs"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool useTLS13 {
             get {

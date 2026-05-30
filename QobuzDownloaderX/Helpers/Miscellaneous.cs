@@ -270,6 +270,7 @@ namespace QobuzDownloaderX.Helpers
         {
             f.streamableCheckBox.Checked = Settings.Default.streamableCheck;
             f.useTLS13CheckBox.Checked = Settings.Default.useTLS13;
+            f.downloadDelayNumericUpDown.Value = Math.Min(f.downloadDelayNumericUpDown.Maximum, Math.Max(0, Settings.Default.downloadDelayMs));
             f.fixMD5sCheckBox.Checked = Settings.Default.fixMD5s;
             f.downloadGoodiesCheckBox.Checked = Settings.Default.downloadGoodies;
             f.downloadSpeedCheckBox.Checked = Settings.Default.showDownloadSpeed;
@@ -1465,6 +1466,10 @@ namespace QobuzDownloaderX.Helpers
                     Miscellaneous.updatePlaylistInfoLabels(f, f.QoPlaylist);
                     int totalTracksPlaylist = f.QoPlaylist.Tracks.Items.Count;
                     int trackIndexPlaylist = 0;
+                    // Snapshot templates once so mid-download UI edits don't affect in-flight tracks
+                    string snapshotPlaylistTemplate = f.playlistTemplate;
+                    string snapshotTrackTemplate = f.trackTemplate;
+                    string snapshotDownloadLocation = f.downloadLocation;
                     foreach (var item in f.QoPlaylist.Tracks.Items)
                     {
                         if (abortToken.IsCancellationRequested) { abortToken.ThrowIfCancellationRequested(); }
@@ -1490,7 +1495,7 @@ namespace QobuzDownloaderX.Helpers
                             // [DOWNLOAD] case "playlist" -> DownloadPlaylistTrackAsync
                             await Task.Run(() => f.downloadTrack.DownloadPlaylistTrackAsync(linkType,
                                 f.app_id, f.format_id, f.audio_format, f.user_auth_token, f.app_secret,
-                                f.downloadLocation, f.trackTemplate, f.playlistTemplate, f.QoAlbum, f.QoItem, f.QoPlaylist,
+                                snapshotDownloadLocation, snapshotTrackTemplate, snapshotPlaylistTemplate, f.QoAlbum, f.QoItem, f.QoPlaylist,
                                 new Progress<int>(value =>
                                 {
                                     double scaledValue = (trackIndexPlaylist - 1 + value / 100.0) / totalTracksPlaylist * 100.0;
@@ -1580,6 +1585,10 @@ namespace QobuzDownloaderX.Helpers
                                    double scaledValue = ((albumIndexArtist - 1) + value / 100.0) / totalAlbumsArtist * 100.0;
                                    f.progressBarDownload.Invoke(new Action(() => f.progressBarDownload.Value = Math.Min(100, (int)Math.Round(scaledValue))));
                                }), artistTrackCounter, stats, abortToken));
+
+                            int delayMs = Settings.Default.downloadDelayMs;
+                            if (delayMs > 0 && albumIndexArtist < totalAlbumsArtist)
+                                await Task.Delay(delayMs, abortToken);
                         }
                         catch
                         {

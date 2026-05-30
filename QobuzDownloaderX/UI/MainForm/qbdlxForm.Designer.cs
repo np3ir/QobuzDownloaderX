@@ -113,6 +113,8 @@ namespace QobuzDownloaderX
             this.downloadFromArtistListBox = new System.Windows.Forms.CheckedListBox();
             this.playlistSectionLabel = new System.Windows.Forms.Label();
             this.advancedOptionsPanelLeft = new System.Windows.Forms.FlowLayoutPanel();
+            this.downloadDelayNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.downloadDelayLabel = new System.Windows.Forms.Label();
             this.useTLS13CheckBox = new System.Windows.Forms.CheckBox();
             this.streamableCheckBox = new System.Windows.Forms.CheckBox();
             this.downloadGoodiesCheckBox = new System.Windows.Forms.CheckBox();
@@ -250,6 +252,7 @@ namespace QobuzDownloaderX
             this.qualitySelectPanel.SuspendLayout();
             this.searchPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.limitSearchResultsNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.downloadDelayNumericUpDown)).BeginInit();
             this.searchSortingPanel.SuspendLayout();
             this.searchResultsPanel.SuspendLayout();
             this.sysTrayContextMenuStrip.SuspendLayout();
@@ -1375,6 +1378,8 @@ namespace QobuzDownloaderX
             // 
             // advancedOptionsPanelLeft
             // 
+            this.advancedOptionsPanelLeft.Controls.Add(this.downloadDelayNumericUpDown);
+            this.advancedOptionsPanelLeft.Controls.Add(this.downloadDelayLabel);
             this.advancedOptionsPanelLeft.Controls.Add(this.useTLS13CheckBox);
             this.advancedOptionsPanelLeft.Controls.Add(this.streamableCheckBox);
             this.advancedOptionsPanelLeft.Controls.Add(this.downloadGoodiesCheckBox);
@@ -1388,9 +1393,34 @@ namespace QobuzDownloaderX
             this.advancedOptionsPanelLeft.Name = "advancedOptionsPanelLeft";
             this.advancedOptionsPanelLeft.Size = new System.Drawing.Size(362, 355);
             this.advancedOptionsPanelLeft.TabIndex = 22;
-            // 
+            //
+            // downloadDelayNumericUpDown
+            //
+            this.downloadDelayNumericUpDown.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.downloadDelayNumericUpDown.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.downloadDelayNumericUpDown.Font = new System.Drawing.Font("Nirmala UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.downloadDelayNumericUpDown.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(147)))), ((int)(((byte)(147)))));
+            this.downloadDelayNumericUpDown.Increment = new decimal(new int[] { 500, 0, 0, 0 });
+            this.downloadDelayNumericUpDown.Maximum = new decimal(new int[] { 30000, 0, 0, 0 });
+            this.downloadDelayNumericUpDown.Minimum = new decimal(new int[] { 0, 0, 0, 0 });
+            this.downloadDelayNumericUpDown.Name = "downloadDelayNumericUpDown";
+            this.downloadDelayNumericUpDown.Size = new System.Drawing.Size(75, 17);
+            this.downloadDelayNumericUpDown.TabIndex = 99;
+            this.downloadDelayNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.downloadDelayNumericUpDown.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            this.downloadDelayNumericUpDown.ValueChanged += new System.EventHandler(this.downloadDelayNumericUpDown_ValueChanged);
+            //
+            // downloadDelayLabel
+            //
+            this.downloadDelayLabel.AutoSize = true;
+            this.downloadDelayLabel.Font = new System.Drawing.Font("Nirmala UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.downloadDelayLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(147)))), ((int)(((byte)(147)))));
+            this.downloadDelayLabel.Name = "downloadDelayLabel";
+            this.downloadDelayLabel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this.downloadDelayLabel.Text = "Delay (ms)";
+            //
             // useTLS13CheckBox
-            // 
+            //
             this.useTLS13CheckBox.AutoSize = true;
             this.useTLS13CheckBox.Checked = true;
             this.useTLS13CheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -3042,6 +3072,7 @@ namespace QobuzDownloaderX
             this.searchPanel.ResumeLayout(false);
             this.searchPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.limitSearchResultsNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.downloadDelayNumericUpDown)).EndInit();
             this.searchSortingPanel.ResumeLayout(false);
             this.searchSortingPanel.PerformLayout();
             this.searchResultsPanel.ResumeLayout(false);
@@ -3142,6 +3173,8 @@ namespace QobuzDownloaderX
         internal System.Windows.Forms.CheckBox streamableCheckBox;
         internal System.Windows.Forms.CheckBox downloadGoodiesCheckBox;
         internal System.Windows.Forms.CheckBox useTLS13CheckBox;
+        internal System.Windows.Forms.NumericUpDown downloadDelayNumericUpDown;
+        internal System.Windows.Forms.Label downloadDelayLabel;
         internal System.Windows.Forms.TextBox templatesListTextBox;
         internal System.Windows.Forms.Label templatesListLabel;
         internal System.Windows.Forms.CheckBox fixMD5sCheckBox;

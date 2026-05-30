@@ -98,10 +98,13 @@ namespace QobuzDownloaderX
 
                     var trackInfo = QoService.TrackGetWithAuth(app_id, item.Id.ToString(), user_auth_token);
                     await downloadTrack.DownloadTrackAsync(
-                        "album", app_id, album_id, format_id, audio_format, 
-                        user_auth_token, app_secret, downloadLocation, artistTemplate, albumTemplate, 
+                        "album", app_id, album_id, format_id, audio_format,
+                        user_auth_token, app_secret, downloadLocation, artistTemplate, albumTemplate,
                         trackTemplate, album, trackInfo, trackProgress, stats, abortToken);
 
+                    int delayMs = Settings.Default.downloadDelayMs;
+                    if (delayMs > 0 && trackIndex < totalTracks)
+                        await Task.Delay(delayMs, abortToken);
                 }
                 catch (Exception ex)
                 {
