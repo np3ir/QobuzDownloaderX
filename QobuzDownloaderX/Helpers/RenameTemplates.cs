@@ -236,7 +236,13 @@ namespace QobuzDownloaderX.Helpers
                 if (QoAlbum != null)
                 {
                     string artistsNames = GetReleaseArtists(QoAlbum, updateAlbumInfoLabels: false) ?? "";
-                    if (variousArtistsNames.Any(name => artistsNames.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                    // Only apply the VA track template when the current template actually uses %artistname%.
+                    // Folder-path templates (e.g. !playlists\%PlaylistTitle%\) do NOT contain %artistname%,
+                    // so replacing the whole template with the VA track template would overwrite the folder
+                    // path with the track-naming pattern — producing wrong output like "0189. Reik - Ciego"
+                    // as the playlist folder instead of "!playlists\RADIO LUNA DE MIEL\".
+                    if (template.Contains("%artistname%") &&
+                        variousArtistsNames.Any(name => artistsNames.Equals(name, StringComparison.OrdinalIgnoreCase)))
                     {
                         // Convert all text between % symbols to lowercase
                         template = percentRegex.Replace(Settings.Default.savedVaTrackTemplate, match => match.Value.ToLower());
@@ -348,6 +354,15 @@ namespace QobuzDownloaderX.Helpers
 
             // GetSafeFilename call to make sure path will be valid
             template = GetSafeFilename(template);
+
+            // Trim leading/trailing whitespace (including Unicode NBSP U+00A0) and dots from
+            // each path segment while the {backslash} placeholder is still in place.
+            // Qobuz API data occasionally returns artist/album names with trailing non-breaking
+            // spaces, which Trim(' ', '.') in MakeValidWindowsFileName does not catch, causing
+            // Windows to fail creating directories like "Z:\R\Ram Sampath \...".
+            template = string.Join("{backslash}",
+                template.Split(new[] { "{backslash}" }, StringSplitOptions.None)
+                        .Select(seg => seg.Trim().Trim('.')));
 
             // Remove any double spaces
             template = spacesBeforeBackslashRegex.Replace(
