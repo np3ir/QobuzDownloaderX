@@ -95,8 +95,31 @@ namespace QobuzDownloaderX
 
             if (abortToken.IsCancellationRequested) { abortToken.ThrowIfCancellationRequested(); }
 
-            // Download stream
-            await downloadFile.DownloadStream(downloadType, streamURL, downloadPath, filePath, audio_format, embeddedArtworkPath, QoAlbum, QoItem, getInfo, abortToken, stats);
+            // Download stream with retry on connection errors
+            const int maxRetries = 3;
+            const int retryDelayMs = 3000;
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                try
+                {
+                    // Fetch a fresh stream URL on retries (previous URL may have expired)
+                    if (attempt > 1)
+                    {
+                        qbdlxForm._qbdlxForm.logger.Debug($"Retry attempt {attempt}/{maxRetries} for track {QoItem.Id}…");
+                        getInfo.updateDownloadOutput($" [Retry {attempt}/{maxRetries}]…");
+                        await Task.Delay(retryDelayMs, abortToken);
+                        var retryStream = QoService.TrackGetFileUrl(QoItem.Id.ToString(), format_id, app_id, user_auth_token, app_secret);
+                        streamURL = retryStream?.StreamURL ?? streamURL;
+                    }
+                    await downloadFile.DownloadStream(downloadType, streamURL, downloadPath, filePath, audio_format, embeddedArtworkPath, QoAlbum, QoItem, getInfo, abortToken, stats);
+                    return; // success
+                }
+                catch (OperationCanceledException) { throw; }
+                catch (Exception ex) when (attempt < maxRetries && ex is IOException)
+                {
+                    qbdlxForm._qbdlxForm.logger.Warning($"DownloadStream connection error (attempt {attempt}/{maxRetries}): {ex.Message}");
+                }
+            }
         }
 
         public async Task DownloadTrackAsync(string downloadType, string app_id, string album_id, string format_id, string audio_format, string user_auth_token, string app_secret, string downloadLocation, string artistTemplate, string albumTemplate, string trackTemplate, Album QoAlbum, Item QoItem, IProgress<int> progress, DownloadStats stats, CancellationToken abortToken)
