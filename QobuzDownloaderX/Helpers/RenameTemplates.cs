@@ -369,17 +369,21 @@ namespace QobuzDownloaderX.Helpers
             return template;
         }
 
+        // Replacement glyphs for Windows-forbidden characters. Use the SAME full-width
+        // Unicode forms as tiddl (CHAR_TO_FULL_WIDTH in tiddl/core/utils/strings.py) so
+        // file names are byte-identical across tools (otherwise visually-equal names like
+        // "11∶11" vs "11：11" don't overwrite each other when copied).
         public static string MakeValidWindowsFileName(
             string fileName,
-            char asteriskChar = '∗',
-            char colonChar = '∶',
-            char questionMarkChar = 'ʔ',
-            char verticalBarChar = 'ǀ',
-            char quoteChar = '″',
-            char backSlashChar = '⧹',
-            char forwardSlashChar = '／',
-            char lessThanChar = '˂',
-            char greaterThanChar = '˃')
+            char asteriskChar = '＊',     // U+FF0A
+            char colonChar = '：',        // U+FF1A
+            char questionMarkChar = '？', // U+FF1F
+            char verticalBarChar = '｜',  // U+FF5C
+            char quoteChar = '＂',        // U+FF02
+            char backSlashChar = '＼',    // U+FF3C
+            char forwardSlashChar = '／', // U+FF0F
+            char lessThanChar = '＜',     // U+FF1C
+            char greaterThanChar = '＞')  // U+FF1E
         {
             if (string.IsNullOrWhiteSpace(fileName))
                 return fileName;
