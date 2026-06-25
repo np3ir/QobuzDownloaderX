@@ -68,16 +68,6 @@ namespace QobuzDownloaderX.Helpers
         }
 
         /// <summary>
-        /// Returns the input string with the first character uppercased and the rest lowercased.
-        /// Returns "" for null or empty input.
-        /// </summary>
-        private static string CapitalizeFirst(string s)
-        {
-            if (string.IsNullOrEmpty(s)) return "";
-            return char.ToUpper(s[0]) + (s.Length > 1 ? s.Substring(1).ToLower() : "");
-        }
-
-        /// <summary>
         /// Returns the A-Z initial for the artist name, or "#" for digits, symbols,
         /// and all non-Latin scripts (Cyrillic, CJK, Arabic, etc.).
         /// Accented Latin letters are normalized: É→E, Ñ→N, Ü→U, etc.
@@ -119,8 +109,9 @@ namespace QobuzDownloaderX.Helpers
             template = template.Replace("%trackpaenclosed[]%", isExplicit ? $"[Explicit]" : $"[Clean]");
             template = template.Replace("%trackpaenclosedshort%", isExplicit ? $"(E)" : $"(C)");
             template = template.Replace("%trackpaenclosedshort[]%", isExplicit ? $"[E]" : $"[C]");
-            template = template.Replace("%trackpaifexenclosed%", isExplicit ? $"(Explicit)" : $"");
-            template = template.Replace("%trackpaifexenclosed[]%", isExplicit ? $"[Explicit]" : $"");
+            // Lowercase to match tiddl/Orpheus/deemix file-name explicit suffix " (explicit)".
+            template = template.Replace("%trackpaifexenclosed%", isExplicit ? $"(explicit)" : $"");
+            template = template.Replace("%trackpaifexenclosed[]%", isExplicit ? $"[explicit]" : $"");
             template = template.Replace("%trackpaifexenclosedshort%", isExplicit ? $"(E)" : $"");
             template = template.Replace("%trackpaifexenclosedshort[]%", isExplicit ? $"[E]" : $"");
             template = template.Replace("%trackpaifclenclosed%", isExplicit ? $"" : $"(Clean)");
@@ -137,8 +128,8 @@ namespace QobuzDownloaderX.Helpers
             template = template.Replace("%albumpaenclosed[]%", isExplicit ? $"[Explicit]" : $"[Clean]");
             template = template.Replace("%albumpaenclosedshort%", isExplicit ? $"(E)" : $"(C)");
             template = template.Replace("%albumpaenclosedshort[]%", isExplicit ? $"[E]" : $"[C]");
-            template = template.Replace("%albumpaifexenclosed%", isExplicit ? $"(Explicit)" : $"");
-            template = template.Replace("%albumpaifexenclosed[]%", isExplicit ? $"[Explicit]" : $"");
+            template = template.Replace("%albumpaifexenclosed%", isExplicit ? $"(explicit)" : $"");
+            template = template.Replace("%albumpaifexenclosed[]%", isExplicit ? $"[explicit]" : $"");
             template = template.Replace("%albumpaifexenclosedshort%", isExplicit ? $"(E)" : $"");
             template = template.Replace("%albumpaifexenclosedshort[]%", isExplicit ? $"[E]" : $"");
             template = template.Replace("%albumpaifclenclosed%", isExplicit ? $"" : $"(Clean)");
@@ -305,7 +296,7 @@ namespace QobuzDownloaderX.Helpers
                     .Replace("%upc%", QoAlbum.UPC ?? "")
                     .Replace("%releasedate%", QoAlbum.ReleaseDateOriginal?.Trim() ?? "")
                     .Replace("%year%", SafeYear(QoAlbum.ReleaseDateOriginal))
-                    .Replace("%releasetype%", CapitalizeFirst(QoAlbum.ProductType))
+                    .Replace("%releasetype%", QoAlbum.ProductType?.ToUpperInvariant() ?? "")
                     .Replace("%bitdepth%", QoAlbum.MaximumBitDepth.ToString() ?? "")
                     .Replace("%samplerate%", QoAlbum.MaximumSamplingRate.ToString() ?? "")
                     .Replace("%totaldiscs%", QoAlbum.MediaCount.ToString())
@@ -344,7 +335,7 @@ namespace QobuzDownloaderX.Helpers
                         .Replace("%upc%", QoAlbum.UPC ?? "")
                         .Replace("%releasedate%", QoAlbum.ReleaseDateOriginal?.Trim() ?? "")
                         .Replace("%year%", SafeYear(QoAlbum.ReleaseDateOriginal))
-                        .Replace("%releasetype%", CapitalizeFirst(QoAlbum.ProductType))
+                        .Replace("%releasetype%", QoAlbum.ProductType?.ToUpperInvariant() ?? "")
                         .Replace("%bitdepth%", QoAlbum.MaximumBitDepth.ToString() ?? "")
                         .Replace("%samplerate%", QoAlbum.MaximumSamplingRate.ToString() ?? "")
                         .Replace("%albumtitle%", QoAlbum.Version == null ? QoAlbum.Title : $"{QoAlbum.Title?.TrimEnd()} ({QoAlbum.Version})")

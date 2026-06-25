@@ -145,7 +145,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool totalTracksTag {
             get {
                 return ((bool)(this["totalTracksTag"]));
@@ -169,7 +169,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool totalDiscsTag {
             get {
                 return ((bool)(this["totalDiscsTag"]));
@@ -205,7 +205,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool urlTag {
             get {
                 return ((bool)(this["urlTag"]));
@@ -229,7 +229,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool upcTag {
             get {
                 return ((bool)(this["upcTag"]));
@@ -253,7 +253,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool yearTag {
             get {
                 return ((bool)(this["yearTag"]));
@@ -265,7 +265,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool explicitTag {
             get {
                 return ((bool)(this["explicitTag"]));
@@ -457,7 +457,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool typeTag {
             get {
                 return ((bool)(this["typeTag"]));
@@ -517,7 +517,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%ArtistName%")]
+        [global::System.Configuration.DefaultSettingValueAttribute("%ArtistInitial%\\%ArtistName%")]
         public string savedArtistTemplate {
             get {
                 return ((string)(this["savedArtistTemplate"]));
@@ -553,7 +553,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool labelTag {
             get {
                 return ((bool)(this["labelTag"]));
@@ -637,7 +637,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%TrackNumber%. %ArtistName% - %TrackTitle%")]
+        [global::System.Configuration.DefaultSettingValueAttribute("%TrackNumber%. %ArtistName% - %TrackTitle% %TrackPAifexenclosed%")]
         public string savedTrackTemplate {
             get {
                 return ((string)(this["savedTrackTemplate"]));
@@ -649,7 +649,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%AlbumTitle% (%Year%) (%AlbumPA%) [UPC%UPC%]")]
+        [global::System.Configuration.DefaultSettingValueAttribute("(%Year%) %AlbumTitle% (%ReleaseType%)")]
         public string savedAlbumTemplate {
             get {
                 return ((string)(this["savedAlbumTemplate"]));
@@ -661,7 +661,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%PlaylistTitle% [ID%PlaylistID%]\\%ArtistName%")]
+        [global::System.Configuration.DefaultSettingValueAttribute("!playlists\\%PlaylistTitle%")]
         public string savedPlaylistTemplate {
             get {
                 return ((string)(this["savedPlaylistTemplate"]));
@@ -757,7 +757,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(", ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(" / ")]
         public string primaryListSeparator {
             get {
                 return ((string)(this["primaryListSeparator"]));
@@ -769,7 +769,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(" & ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(" / ")]
         public string listEndSeparator {
             get {
                 return ((string)(this["listEndSeparator"]));
@@ -805,7 +805,7 @@ namespace QobuzDownloaderX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%TrackNumber%. %ArtistName% - %TrackTitle%")]
+        [global::System.Configuration.DefaultSettingValueAttribute("%TrackNumber%. %ArtistName% - %TrackTitle% %TrackPAifexenclosed%")]
         public string savedVaTrackTemplate {
             get {
                 return ((string)(this["savedVaTrackTemplate"]));

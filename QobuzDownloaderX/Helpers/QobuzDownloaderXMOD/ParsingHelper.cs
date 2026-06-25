@@ -28,12 +28,26 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
                           .ToArray();
         }
 
+        // tiddl / Orpheus / deemix parity: the canonical artist order is sorted(MAIN) + sorted(FEATURED),
+        // sorted case-sensitively (Ordinal) to match Python's default sorted(). Deterministic across tools.
+        public static string[] SortArtists(string[] artists)
+        {
+            if (artists == null || artists.Length == 0)
+                return new string[0];
+
+            string[] sorted = (string[])artists.Clone();
+            Array.Sort(sorted, StringComparer.Ordinal);
+            return sorted;
+        }
+
         public static string MergeFeaturedArtistsWithMainArtists(string[] mainArtists, string[] featuresArtists)
         {
-            if (featuresArtists == null || featuresArtists.Length == 0)
-                return MergeDoubleDelimitedList(mainArtists, primaryListSeparator, listEndSeparator);
+            string[] sortedMain = SortArtists(mainArtists);
 
-            string[] allArtists = mainArtists.Concat(featuresArtists).ToArray();
+            if (featuresArtists == null || featuresArtists.Length == 0)
+                return MergeDoubleDelimitedList(sortedMain, primaryListSeparator, listEndSeparator);
+
+            string[] allArtists = sortedMain.Concat(SortArtists(featuresArtists)).ToArray();
             return MergeDoubleDelimitedList(allArtists, primaryListSeparator, listEndSeparator);
         }
 
@@ -81,7 +95,10 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
         // Also, now it handles cases where the track title already contains " Feat. "-like words (case-insensitive)
         // and where the performer name is a composed name that already contains " Feat " word.
         // (i.e., does not add featured artists names to the resulting string.)
-        public static string GetTrackPerformersName(QopenAPI.Item QoItem)
+        // Returns the canonical, ordered list of track artists = sorted(MAIN) + sorted(FEATURED),
+        // applying the same "feat. already in title" handling used for the merged name.
+        // Used for the multi-value ARTIST tag (one entry per artist) — tiddl / Orpheus parity.
+        public static string[] GetTrackPerformersArray(QopenAPI.Item QoItem)
         {
             PerformersParser performersParser = new PerformersParser(QoItem);
 
@@ -89,15 +106,15 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
             string[] mainPerformers = performersParser.GetPerformersWithRole(InvolvedPersonRoleType.MainArtist);
             string[] featuredPerformers = performersParser.GetPerformersWithRole(InvolvedPersonRoleType.FeaturedArtist);
 
-            string title = QoItem.Title;
-            
-            string[] featPatterns = { 
+            string title = QoItem.Title ?? "";
+
+            string[] featPatterns = {
                 "featuring ", " ft.",
                 "(feat ", "(feat.",
-                "[feat ", "[feat.", 
-                " feat ", " feat. ", 
-                "[ft ", "[ft.", 
-                "(ft ", "(ft." 
+                "[feat ", "[feat.",
+                " feat ", " feat. ",
+                "[ft ", "[ft.",
+                "(ft ", "(ft."
             };
             // Note: using multiple IndexOf calls instead of Regex is preferable here for performance.
             bool hasFeat = featPatterns.Any(p => title.IndexOf(p, StringComparison.OrdinalIgnoreCase) >= 0);
@@ -127,8 +144,21 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
                 }
             }
 
-            // Merge main artists + featured artists
-            string trackArtists = ParsingHelper.MergeFeaturedArtistsWithMainArtists(mainPerformers, featuredPerformers);
+            // Canonical order: sorted(MAIN) + sorted(FEATURED)
+            string[] ordered = SortArtists(mainPerformers).Concat(SortArtists(featuredPerformers)).ToArray();
+
+            return ordered
+                .Select(DecodeEncodedNonAsciiCharacters)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToArray();
+        }
+
+        public static string GetTrackPerformersName(QopenAPI.Item QoItem)
+        {
+            // Build the merged name from the same canonical, ordered artist list used for the tag,
+            // so the file name and the ARTIST tag are always consistent.
+            string[] performers = GetTrackPerformersArray(QoItem);
+            string trackArtists = MergeDoubleDelimitedList(performers, primaryListSeparator, listEndSeparator);
 
             string performerName;
 
@@ -149,6 +179,8 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
                 performerName = ParsingHelper.DecodeEncodedNonAsciiCharacters(QoItem.Album?.Artist?.Name);
             }
 
+            performerName = performerName ?? "";
+
             // Case: the main artist name (QoItem.Performer.Name) or the name extracted from the artist role
             // is a composed name that includes a "Feat" word without a dot, for example: "David Feat Dj Mago, MainArtist".
             performerName = performerName.Replace(" Feat ", " Feat. ").
@@ -167,8 +199,8 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
             AlbumArtists = ParsingHelper.GetArtistNames(QoAlbum.Artists, InvolvedPersonRoleType.MainArtist);
             string[] featuredArtists = ParsingHelper.GetArtistNames(QoAlbum.Artists, InvolvedPersonRoleType.FeaturedArtist);
             string albumArtists = ParsingHelper.MergeFeaturedArtistsWithMainArtists(AlbumArtists, featuredArtists);
-            // Add Features Artists to Album Artists.
-            AlbumArtists = AlbumArtists.Concat(featuredArtists).ToArray();
+            // Add Featured Artists to Album Artists, canonical order: sorted(MAIN) + sorted(FEATURED).
+            AlbumArtists = SortArtists(AlbumArtists).Concat(SortArtists(featuredArtists)).ToArray();
             if (!string.IsNullOrEmpty(albumArtists))
             {
                 // User Main-Artists by default

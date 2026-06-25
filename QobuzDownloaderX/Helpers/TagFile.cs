@@ -81,18 +81,20 @@ namespace QobuzDownloaderX
             if (Settings.Default.releaseDateTag || Settings.Default.yearTag)
             {
                 string releaseDate = !string.IsNullOrWhiteSpace(QoItem?.ReleaseDateOriginal) ? QoItem.ReleaseDateOriginal : QoAlbum?.ReleaseDateOriginal;
-                releaseDate = releaseDate.Trim();
+                releaseDate = releaseDate?.Trim();
 
                 if (!string.IsNullOrEmpty(releaseDate))
                 {
+                    string yearOnly = releaseDate.Length >= 4 ? releaseDate.Substring(0, 4) : releaseDate;
+
+                    // tiddl/Orpheus parity: the Vorbis DATE field holds the year only.
                     if (Settings.Default.releaseDateTag)
                     {
-                        customTags.SetField("DATE", releaseDate);
+                        customTags.SetField("DATE", yearOnly);
                     }
 
-                    if (Settings.Default.yearTag && (releaseDate.Length >= 4))
+                    if (Settings.Default.yearTag)
                     {
-                        string yearOnly = releaseDate.Substring(0, 4);
                         customTags.SetField("YEAR", yearOnly);
                     }
                 }
@@ -146,20 +148,22 @@ namespace QobuzDownloaderX
             if (Settings.Default.releaseDateTag || Settings.Default.yearTag)
             {
                 string releaseDate = !string.IsNullOrWhiteSpace(QoItem?.ReleaseDateOriginal) ? QoItem.ReleaseDateOriginal : QoAlbum?.ReleaseDateOriginal;
-                releaseDate = releaseDate.Trim();
+                releaseDate = releaseDate?.Trim();
 
-                if (!string.IsNullOrEmpty(releaseDate))
+                if (!string.IsNullOrEmpty(releaseDate) && releaseDate.Length >= 4)
                 {
-                    if (Settings.Default.yearTag && (releaseDate.Length >= 4))
+                    string yearOnly = releaseDate.Substring(0, 4);
+
+                    if (Settings.Default.yearTag)
                     {
-                        uint yearOnly = uint.Parse(releaseDate.Substring(0, 4));
-                        mp3Tag.Year = yearOnly;
+                        mp3Tag.Year = uint.Parse(yearOnly);
                     }
 
+                    // tiddl/Orpheus parity: release-date frame holds the year only.
                     if (Settings.Default.releaseDateTag)
                     {
                         // "TDRL" (release date) frame.
-                        mp3Tag.SetTextFrame("TDRL", releaseDate);
+                        mp3Tag.SetTextFrame("TDRL", yearOnly);
                     }
                 }
             }
@@ -244,10 +248,13 @@ namespace QobuzDownloaderX
             {
                 if (Settings.Default.mergeArtistNames)
                 {
-                    string performerNames = ParsingHelper.GetTrackPerformersName(QoItem);
-                    file.Tag.Performers = new string[] { performerNames };
+                    // Multi-value ARTIST (one entry per artist), canonical order sorted(MAIN)+sorted(FEATURED) — tiddl/Orpheus parity.
+                    string[] performers = ParsingHelper.GetTrackPerformersArray(QoItem);
+                    file.Tag.Performers = performers.Length > 0
+                        ? performers
+                        : new[] { QoItem.Performer?.Name };
                 } else {
-                    file.Tag.Performers = new[] { QoItem.Performer?.Name }; 
+                    file.Tag.Performers = new[] { QoItem.Performer?.Name };
                 }
             }
         }

@@ -82,14 +82,16 @@ For Hi-Res they produce the same result. Use `%FormatWithHiResQuality%` if you w
 | `PAEnclosed[]` | `[Explicit]` | `[Clean]` |
 | `PAEnclosedShort` | `(E)` | `(C)` |
 | `PAEnclosedShort[]` | `[E]` | `[C]` |
-| `PAifExEnclosed` | `(Explicit)` | *(empty)* |
-| `PAifExEnclosed[]` | `[Explicit]` | *(empty)* |
+| `PAifExEnclosed` | `(explicit)` | *(empty)* |
+| `PAifExEnclosed[]` | `[explicit]` | *(empty)* |
 | `PAifExEnclosedShort` | `(E)` | *(empty)* |
 | `PAifExEnclosedShort[]` | `[E]` | *(empty)* |
 | `PAifClEnclosed` | *(empty)* | `(Clean)` |
 | `PAifClEnclosed[]` | *(empty)* | `[Clean]` |
 | `PAifClEnclosedShort` | *(empty)* | `(C)` |
 | `PAifClEnclosedShort[]` | *(empty)* | `[C]` |
+
+> **Note:** The `PAifExEnclosed` / `PAifExEnclosed[]` variants render in **lowercase** (`(explicit)` / `[explicit]`) on purpose, to match the file-name explicit suffix used by tiddl / OrpheusDL / deemix. The default track template uses `%TrackPAifexenclosed%`.
 
 **Most useful in practice:** `%TrackPAifEx%` — appends `Explicit` only when the track is explicit, leaving clean tracks unaffected.
 
