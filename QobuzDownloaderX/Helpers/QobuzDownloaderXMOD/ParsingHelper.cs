@@ -13,6 +13,16 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
         public static string primaryListSeparator = ", ";
         public static string listEndSeparator = " & ";
 
+        // Max artists rendered in a file NAME before the tail collapses into
+        // "& others". Compilation tracks can list 20+ artists which, joined into
+        // the filename, blow past Windows MAX_PATH (260 chars) and make the file
+        // unopenable in players that aren't long-path-aware. Only the file name is
+        // capped (GetTrackPerformersName); the ARTIST tag uses the full
+        // GetTrackPerformersArray, so every artist is still written to the tag.
+        // Parity with the tiddl / OrpheusDL / deemix forks.
+        public static int maxArtistsInName = 3;
+        public static string othersSuffix = " & others";
+
         private static readonly Regex unicodeRegex = new Regex(@"\\u(?<Value>[0-9A-Fa-f]{4})", RegexOptions.Compiled );
 
         /// <summary>
@@ -158,7 +168,10 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
             // Build the merged name from the same canonical, ordered artist list used for the tag,
             // so the file name and the ARTIST tag are always consistent.
             string[] performers = GetTrackPerformersArray(QoItem);
-            string trackArtists = MergeDoubleDelimitedList(performers, primaryListSeparator, listEndSeparator);
+            // Cap the NAME only (tag path uses the full array): first N + "& others".
+            string trackArtists = performers.Length > maxArtistsInName
+                ? string.Join(primaryListSeparator, performers.Take(maxArtistsInName)) + othersSuffix
+                : MergeDoubleDelimitedList(performers, primaryListSeparator, listEndSeparator);
 
             string performerName;
 
