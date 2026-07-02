@@ -18,6 +18,13 @@ namespace QobuzDownloaderX.Helpers
 
         public string outputText { get; set; }
 
+        // Sort key for oldest-release-first ordering — undated/unparseable entries
+        // sort last instead of trusting whatever order the Qobuz API returns.
+        private static DateTime ParseReleaseDate(Item item)
+        {
+            return DateTime.TryParse(item?.ReleaseDateOriginal, out DateTime dt) ? dt : DateTime.MaxValue;
+        }
+
         public HashSet<string> GetArtistReleaseTypeIds(string app_id, string artist_id, string selectedTypes, string user_auth_token)
         {
             if (string.IsNullOrEmpty(selectedTypes))
@@ -109,6 +116,7 @@ namespace QobuzDownloaderX.Helpers
                 {
                     QoArtist.Albums.Items = allItems.Cast<Item>()
                                                     .OrderByDescending(a => a.Artist?.Id.ToString() == artist_id)
+                                                    .ThenBy(ParseReleaseDate)
                                                     .ToList();
                 }
                 else
@@ -118,6 +126,7 @@ namespace QobuzDownloaderX.Helpers
                     QoArtist.Albums.Items = allItems.Cast<Item>()
                                                     .Where(a => allowedIds.Contains(a.Id.ToString()))
                                                     .OrderByDescending(a => a.Artist?.Id.ToString() == artist_id)
+                                                    .ThenBy(ParseReleaseDate)
                                                     .ToList();
                 }
 
@@ -172,7 +181,7 @@ namespace QobuzDownloaderX.Helpers
                     if (offset > 100000) break; // safety cutoff
                 }
 
-                QoLabel.Albums.Items = allItems.Cast<Item>().ToList();
+                QoLabel.Albums.Items = allItems.Cast<Item>().OrderBy(ParseReleaseDate).ToList();
                 return QoLabel;
             }
             catch (Exception getLabelInfoEx)
