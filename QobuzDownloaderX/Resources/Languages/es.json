@@ -41,6 +41,7 @@
     "extraSettingsLabel":           "AJUSTES ADICIONALES",
     "languageLabel":                "Idioma actual",
     "playlistTemplateLabel":        "PLANTILLA DE PLAYLIST",
+    "playlistTrackTemplateLabel":   "PLANTILLA DE PISTA DE PLAYLIST",
     "favoritesTemplateLabel":       "PLANTILLA DE FAVORITOS",
     "cdTemplateLabel":              "PLANTILLA DE CD",
     "savedArtLabel":                "Tamaño de portada guardada en disco",

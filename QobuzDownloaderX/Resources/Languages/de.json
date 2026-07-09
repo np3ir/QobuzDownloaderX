@@ -41,6 +41,7 @@
     "extraSettingsLabel":           "WEITERE OPTIONEN",
     "languageLabel":                "Aktuelle Sprache",
     "playlistTemplateLabel":        "PLAYLIST VORLAGE",
+    "playlistTrackTemplateLabel":   "PLAYLIST TRACK VORLAGE", // AI translation
     "favoritesTemplateLabel":       "FAVORITEN VORLAGE",
     "cdTemplateLabel":              "CD-VORLAGE", // AI translation
     "savedArtLabel":                "Gespeicherte Artwork Größe",

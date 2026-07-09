@@ -53,6 +53,7 @@ namespace QobuzDownloaderX
         internal string albumTemplate { get; set; }
         internal string trackTemplate { get; set; }
         internal string playlistTemplate { get; set; }
+        internal string playlistTrackTemplate { get; set; }
         internal string favoritesTemplate { get; set; }
 
         internal string app_id { get; set; }
@@ -688,6 +689,7 @@ namespace QobuzDownloaderX
             tip.SetToolTip(favoritesTemplateTextBox, fullRef);
             tip.SetToolTip(cdTemplateTextBox, fullRef);
             tip.SetToolTip(playlistTemplateTextBox, playlistRef);
+            tip.SetToolTip(playlistTrackTemplateTextBox, playlistRef);
         }
 
         private void resetTemplatesButton_Click(object sender, EventArgs e)
@@ -697,6 +699,7 @@ namespace QobuzDownloaderX
             trackTemplateTextBox.Text = Settings.Default.Properties["savedTrackTemplate"].DefaultValue.ToString();
             vaTrackTemplateTextBox.Text = Settings.Default.Properties["savedVaTrackTemplate"].DefaultValue.ToString();
             playlistTemplateTextBox.Text = Settings.Default.Properties["savedPlaylistTemplate"].DefaultValue.ToString();
+            playlistTrackTemplateTextBox.Text = Settings.Default.Properties["savedPlaylistTrackTemplate"].DefaultValue.ToString();
             favoritesTemplateTextBox.Text = Settings.Default.Properties["savedFavoritesTemplate"].DefaultValue.ToString();
             cdTemplateTextBox.Text = Settings.Default.Properties["savedCdTemplate"].DefaultValue.ToString();
         }
@@ -708,6 +711,7 @@ namespace QobuzDownloaderX
             Settings.Default.savedTrackTemplate = trackTemplateTextBox.Text;
             Settings.Default.savedVaTrackTemplate = vaTrackTemplateTextBox.Text;
             Settings.Default.savedPlaylistTemplate = playlistTemplateTextBox.Text;
+            Settings.Default.savedPlaylistTrackTemplate = playlistTrackTemplateTextBox.Text;
             Settings.Default.savedFavoritesTemplate = favoritesTemplateTextBox.Text;
             Settings.Default.savedCdTemplate = cdTemplateTextBox.Text;
             Settings.Default.Save();

@@ -41,6 +41,7 @@
     "extraSettingsLabel":           "ADDITIONAL SETTINGS",
     "languageLabel":                "Current Language",
     "playlistTemplateLabel":        "PLAYLIST TEMPLATE",
+    "playlistTrackTemplateLabel":   "PLAYLIST TRACK TEMPLATE",
     "favoritesTemplateLabel":       "FAVORITES TEMPLATE",
     "cdTemplateLabel":              "CD TEMPLATE",
     "savedArtLabel":                "Saved Artwork Size",

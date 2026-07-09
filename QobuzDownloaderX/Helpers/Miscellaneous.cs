@@ -172,6 +172,7 @@ namespace QobuzDownloaderX.Helpers
             f.albumTemplate = f.albumTemplateTextBox.Text;
             f.trackTemplate = f.trackTemplateTextBox.Text;
             f.playlistTemplate = f.playlistTemplateTextBox.Text;
+            f.playlistTrackTemplate = f.playlistTrackTemplateTextBox.Text;
             f.favoritesTemplate = f.favoritesTemplateTextBox.Text;
         }
 
@@ -182,6 +183,7 @@ namespace QobuzDownloaderX.Helpers
             f.trackTemplateTextBox.Text = Settings.Default.savedTrackTemplate;
             f.vaTrackTemplateTextBox.Text = Settings.Default.savedVaTrackTemplate;
             f.playlistTemplateTextBox.Text = Settings.Default.savedPlaylistTemplate;
+            f.playlistTrackTemplateTextBox.Text = Settings.Default.savedPlaylistTrackTemplate;
             f.favoritesTemplateTextBox.Text = Settings.Default.savedFavoritesTemplate;
             f.cdTemplateTextBox.Text = Settings.Default.savedCdTemplate;
             updateTemplates(f);
@@ -458,6 +460,7 @@ namespace QobuzDownloaderX.Helpers
             f.extraSettingsLabel.Text = f.languageManager.GetTranslation("extraSettingsLabel");
             f.languageLabel.Text = f.languageManager.GetTranslation("languageLabel");
             f.playlistTemplateLabel.Text = f.languageManager.GetTranslation("playlistTemplateLabel");
+            f.playlistTrackTemplateLabel.Text = f.languageManager.GetTranslation("playlistTrackTemplateLabel");
             f.favoritesTemplateLabel.Text = f.languageManager.GetTranslation("favoritesTemplateLabel");
             f.cdTemplateLabel.Text = f.languageManager.GetTranslation("cdTemplateLabel");
             f.savedArtLabel.Text = f.languageManager.GetTranslation("savedArtLabel");
@@ -1468,7 +1471,7 @@ namespace QobuzDownloaderX.Helpers
                     int trackIndexPlaylist = 0;
                     // Snapshot templates once so mid-download UI edits don't affect in-flight tracks
                     string snapshotPlaylistTemplate = f.playlistTemplate;
-                    string snapshotTrackTemplate = f.trackTemplate;
+                    string snapshotTrackTemplate = f.playlistTrackTemplate;
                     string snapshotDownloadLocation = f.downloadLocation;
                     foreach (var item in f.QoPlaylist.Tracks.Items)
                     {

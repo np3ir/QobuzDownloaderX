@@ -164,6 +164,9 @@
     <Setting Name="savedPlaylistTemplate" Type="System.String" Scope="User">
       <Value Profile="(Default)">%PlaylistTitle% [ID%PlaylistID%]\%ArtistName%</Value>
     </Setting>
+    <Setting Name="savedPlaylistTrackTemplate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%ArtistName% - %TrackTitle% %TrackPAifexenclosed%</Value>
+    </Setting>
     <Setting Name="downloadGoodies" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>

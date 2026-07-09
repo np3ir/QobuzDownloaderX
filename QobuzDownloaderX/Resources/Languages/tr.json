@@ -41,6 +41,7 @@
     "extraSettingsLabel":           "EK AYARLAR",
     "languageLabel":                "DİL",
     "playlistTemplateLabel":        "OYNATMA LİSTESİ ŞABLONU",
+    "playlistTrackTemplateLabel":   "OYNATMA LİSTESİ PARÇA ŞABLONU", // AI translation
     "favoritesTemplateLabel":       "FAVORİLER ŞABLONU",
     "cdTemplateLabel":              "CD ŞABLONU", // AI translation
     "savedArtLabel":                "KAYDEDİLEN KAPAK BOYUTU (px)",

@@ -41,6 +41,7 @@
     "extraSettingsLabel":           "ДОПОЛНИТЕЛЬНО",
     "languageLabel":                "Язык интерфейса",
     "playlistTemplateLabel":        "ШАБЛОН ПЛЕЙЛИСТА",
+    "playlistTrackTemplateLabel":   "ШАБЛОН ТРЕКА ПЛЕЙЛИСТА",
     "favoritesTemplateLabel":       "ШАБЛОН ИЗБРАННОГО",
     "cdTemplateLabel":              "ШАБЛОН CD",
     "savedArtLabel":                "Размер сохраняемого изображения",

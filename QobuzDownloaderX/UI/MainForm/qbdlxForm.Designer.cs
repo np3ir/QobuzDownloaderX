@@ -85,6 +85,8 @@ namespace QobuzDownloaderX
             this.trackTemplateLabel = new System.Windows.Forms.Label();
             this.playlistTemplateTextBox = new System.Windows.Forms.TextBox();
             this.playlistTemplateLabel = new System.Windows.Forms.Label();
+            this.playlistTrackTemplateTextBox = new System.Windows.Forms.TextBox();
+            this.playlistTrackTemplateLabel = new System.Windows.Forms.Label();
             this.artistTemplateTextBox = new System.Windows.Forms.TextBox();
             this.favoritesTemplateTextBox = new System.Windows.Forms.TextBox();
             this.albumTemplateTextBox = new System.Windows.Forms.TextBox();
@@ -765,6 +767,8 @@ namespace QobuzDownloaderX
             this.settingsPanel.Controls.Add(this.trackTemplateLabel);
             this.settingsPanel.Controls.Add(this.playlistTemplateTextBox);
             this.settingsPanel.Controls.Add(this.playlistTemplateLabel);
+            this.settingsPanel.Controls.Add(this.playlistTrackTemplateTextBox);
+            this.settingsPanel.Controls.Add(this.playlistTrackTemplateLabel);
             this.settingsPanel.Controls.Add(this.artistTemplateTextBox);
             this.settingsPanel.Controls.Add(this.favoritesTemplateTextBox);
             this.settingsPanel.Controls.Add(this.albumTemplateTextBox);
@@ -778,7 +782,7 @@ namespace QobuzDownloaderX
             this.settingsPanel.Controls.Add(this.settingsLabel);
             this.settingsPanel.Location = new System.Drawing.Point(451, 195);
             this.settingsPanel.Name = "settingsPanel";
-            this.settingsPanel.Size = new System.Drawing.Size(771, 577);
+            this.settingsPanel.Size = new System.Drawing.Size(771, 750);
             this.settingsPanel.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -786,7 +790,7 @@ namespace QobuzDownloaderX
             this.flowLayoutPanel1.Controls.Add(this.resetTemplatesButton);
             this.flowLayoutPanel1.Controls.Add(this.saveTemplatesButton);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(261, 381);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(261, 412);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(430, 37);
             this.flowLayoutPanel1.TabIndex = 18;
@@ -853,7 +857,32 @@ namespace QobuzDownloaderX
             this.cdTemplateLabel.TabIndex = 22;
             this.cdTemplateLabel.Text = "CD TEMPLATE";
             this.cdTemplateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
+            // playlistTrackTemplateTextBox
+            //
+            this.playlistTrackTemplateTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.playlistTrackTemplateTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.playlistTrackTemplateTextBox.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.playlistTrackTemplateTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(147)))), ((int)(((byte)(147)))));
+            this.playlistTrackTemplateTextBox.Location = new System.Drawing.Point(261, 385);
+            this.playlistTrackTemplateTextBox.Multiline = true;
+            this.playlistTrackTemplateTextBox.Name = "playlistTrackTemplateTextBox";
+            this.playlistTrackTemplateTextBox.Size = new System.Drawing.Size(430, 21);
+            this.playlistTrackTemplateTextBox.TabIndex = 25;
+            this.playlistTrackTemplateTextBox.Text = "%ArtistName% - %TrackTitle% %TrackPAifexenclosed%";
+            this.playlistTrackTemplateTextBox.WordWrap = false;
+            //
+            // playlistTrackTemplateLabel
+            //
+            this.playlistTrackTemplateLabel.Font = new System.Drawing.Font("Nirmala UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.playlistTrackTemplateLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(147)))), ((int)(((byte)(147)))));
+            this.playlistTrackTemplateLabel.Location = new System.Drawing.Point(4, 385);
+            this.playlistTrackTemplateLabel.Name = "playlistTrackTemplateLabel";
+            this.playlistTrackTemplateLabel.Size = new System.Drawing.Size(251, 21);
+            this.playlistTrackTemplateLabel.TabIndex = 24;
+            this.playlistTrackTemplateLabel.Text = "PLAYLIST TRACK TEMPLATE";
+            this.playlistTrackTemplateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            //
             // vaTrackTemplateTextBox
             // 
             this.vaTrackTemplateTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
@@ -933,7 +962,7 @@ namespace QobuzDownloaderX
             // 
             this.templatesListLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.templatesListLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(147)))), ((int)(((byte)(147)))));
-            this.templatesListLabel.Location = new System.Drawing.Point(0, 417);
+            this.templatesListLabel.Location = new System.Drawing.Point(0, 448);
             this.templatesListLabel.Name = "templatesListLabel";
             this.templatesListLabel.Size = new System.Drawing.Size(771, 25);
             this.templatesListLabel.TabIndex = 19;
@@ -947,13 +976,13 @@ namespace QobuzDownloaderX
             this.templatesListTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.templatesListTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.templatesListTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(147)))), ((int)(((byte)(147)))));
-            this.templatesListTextBox.Location = new System.Drawing.Point(95, 449);
+            this.templatesListTextBox.Location = new System.Drawing.Point(95, 480);
             this.templatesListTextBox.Multiline = true;
             this.templatesListTextBox.Name = "templatesListTextBox";
             this.templatesListTextBox.ReadOnly = true;
             this.templatesListTextBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.templatesListTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.templatesListTextBox.Size = new System.Drawing.Size(596, 77);
+            this.templatesListTextBox.Size = new System.Drawing.Size(596, 220);
             this.templatesListTextBox.TabIndex = 20;
             this.templatesListTextBox.Text = resources.GetString("templatesListTextBox.Text");
             this.templatesListTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -967,7 +996,7 @@ namespace QobuzDownloaderX
             this.additionalSettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.additionalSettingsButton.Font = new System.Drawing.Font("Nirmala UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.additionalSettingsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(147)))), ((int)(((byte)(147)))));
-            this.additionalSettingsButton.Location = new System.Drawing.Point(541, 533);
+            this.additionalSettingsButton.Location = new System.Drawing.Point(541, 707);
             this.additionalSettingsButton.Name = "additionalSettingsButton";
             this.additionalSettingsButton.Size = new System.Drawing.Size(150, 31);
             this.additionalSettingsButton.TabIndex = 21;
@@ -3013,7 +3042,7 @@ namespace QobuzDownloaderX
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(33)))));
-            this.ClientSize = new System.Drawing.Size(951, 580);
+            this.ClientSize = new System.Drawing.Size(951, 965);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.minimizeButton);
             this.Controls.Add(this.qualitySelectButton);
@@ -3124,6 +3153,8 @@ namespace QobuzDownloaderX
         internal System.Windows.Forms.TextBox albumTemplateTextBox;
         internal System.Windows.Forms.Label playlistTemplateLabel;
         internal System.Windows.Forms.Label albumTemplateLabel;
+        internal System.Windows.Forms.TextBox playlistTrackTemplateTextBox;
+        internal System.Windows.Forms.Label playlistTrackTemplateLabel;
         internal System.Windows.Forms.Button resetTemplatesButton;
         internal System.Windows.Forms.Button saveTemplatesButton;
         internal System.Windows.Forms.TextBox favoritesTemplateTextBox;

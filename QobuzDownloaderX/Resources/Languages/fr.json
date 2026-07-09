@@ -41,6 +41,7 @@
     "extraSettingsLabel":           "Paramètres Additionnels",
     "languageLabel":                "Langage",
     "playlistTemplateLabel":        "Modèle de playlist",
+    "playlistTrackTemplateLabel":   "Modèle de piste de playlist",
     "favoritesTemplateLabel":       "Modèle des favoris",
     "cdTemplateLabel":              "Modèle de CD",
     "savedArtLabel":                "Taille de la pochette enregistrée",

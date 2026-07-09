@@ -670,7 +670,19 @@ namespace QobuzDownloaderX.Properties {
                 this["savedPlaylistTemplate"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%ArtistName% - %TrackTitle% %TrackPAifexenclosed%")]
+        public string savedPlaylistTrackTemplate {
+            get {
+                return ((string)(this["savedPlaylistTrackTemplate"]));
+            }
+            set {
+                this["savedPlaylistTrackTemplate"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
