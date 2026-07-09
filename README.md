@@ -6,6 +6,9 @@
 
 > **Fork** of [ImAiiR/QobuzDownloaderX](https://github.com/ImAiiR/QobuzDownloaderX) with extra template variables, djelvigilante-style artist separator and improved tooltips.
 
+> [!WARNING]
+> **This app is for personal, educational, and archival purposes only.** It is not affiliated with Qobuz. Users must ensure their use complies with Qobuz's terms of service and all applicable local copyright laws. Downloaded content is for personal use and may not be shared or redistributed. The developer assumes no responsibility for misuse of this app.
+
 Inspired by Qo-DL by <a href="https://github.com/Sorrow446">Sorrow</a> & <a href="https://github.com/DashLt">Dash</a>
 
 <p style="align:center;">
