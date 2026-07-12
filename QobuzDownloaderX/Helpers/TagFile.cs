@@ -181,9 +181,15 @@ namespace QobuzDownloaderX
 
             if (Settings.Default.trackTitleTag)
             {
+                // tiddl parity: TITLE tag is written clean (no "(feat. X)") when X is a
+                // known performer — the feat'd names go in the multi-value ARTIST tag.
+                // Only in merged-artists mode; otherwise the feat info would be lost.
+                string titleBase = Settings.Default.mergeArtistNames
+                                   ? ParsingHelper.GetCleanTrackTitle(QoItem)
+                                   : QoItem.Title;
                 string titleFormatted = QoItem.Version == null
-                                        ? QoItem.Title
-                                        : $"{QoItem.Title.TrimEnd()} ({QoItem.Version})";
+                                        ? titleBase
+                                        : $"{titleBase.TrimEnd()} ({QoItem.Version})";
                 titleFormatted = RenameTemplates.repeatedParenthesesRegex.Replace(titleFormatted, "($1)");
 
                 bool isExplicit = QoItem.ParentalWarning;

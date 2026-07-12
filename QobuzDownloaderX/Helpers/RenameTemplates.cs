@@ -253,9 +253,16 @@ namespace QobuzDownloaderX.Helpers
                     .Replace("%trackbitdepth%", QoItem.MaximumBitDepth.ToString())
                     .Replace("%tracksamplerate%", QoItem.MaximumSamplingRate.ToString());
 
+                // tiddl parity: strip "(feat. X)" from the title when X is a known
+                // performer — those names are rendered in the artist part instead
+                // ("NN. Main ／ Feat - Clean Title"). Only in merged-artists mode;
+                // otherwise the feat info would be lost from the file name.
+                string titleBase = Settings.Default.mergeArtistNames
+                                   ? ParsingHelper.GetCleanTrackTitle(QoItem)
+                                   : QoItem.Title;
                 string titleFormatted = QoItem.Version == null
-                                        ? QoItem.Title
-                                        : $"{QoItem.Title.TrimEnd()} ({QoItem.Version})";
+                                        ? titleBase
+                                        : $"{titleBase.TrimEnd()} ({QoItem.Version})";
                 titleFormatted = repeatedParenthesesRegex.Replace(titleFormatted, "($1)");
                 template = template.Replace("%tracktitle%", titleFormatted);
 

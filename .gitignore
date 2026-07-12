@@ -251,3 +251,5 @@ QobuzDownloaderX-v*.zip
 *.bak_*
 user.config
 -assets/*_preview.png
+
+.backup_*/

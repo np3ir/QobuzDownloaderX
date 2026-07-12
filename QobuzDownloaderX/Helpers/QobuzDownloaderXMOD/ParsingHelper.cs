@@ -25,6 +25,167 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
 
         private static readonly Regex unicodeRegex = new Regex(@"\\u(?<Value>[0-9A-Fa-f]{4})", RegexOptions.Compiled );
 
+        // ------------------------------------------------------------------
+        // Feat handling — ported 1:1 from the tiddl fork
+        // (tiddl/core/utils/format.py: _KEYWORDS_PATTERN / _RE_ANTI_FEAT /
+        // clean_track_title) so both tools produce identical names:
+        //   "NN. Main Artist / Featured Artist - Clean Title"
+        // (the "/" becomes fullwidth "／" in file names via MakeValidWindowsFileName)
+        // ------------------------------------------------------------------
+
+        private const string featKeywordsPattern =
+            // English / Universal
+            @"f(?:ea)?t(?:\.|uring)?|with|w/|starring|guest(?: vocals:?)?|vocals?(?::| by)|" +
+            @"prod(?:\.|uced by)|(?:remix|edit|mix) by|" +
+            @"vs\.?|x|×|pres(?:en)?t(?:s|a|e)?|" +
+            @"collab(?:oration)?|" +
+            // Spanish
+            @"con|junto a|y|col(?:\.|aboraci[oó]n)?|invitado|voz(?: de)?|producido por|remix de|" +
+            // German / French
+            @"mit|avec|et";
+
+        private static readonly Regex antiFeatRegex = new Regex(
+            // Option 1: Parentheses/Brackets — requires closing bracket
+            @"(?:\s*[\(\[\{]\s*(?:" + featKeywordsPattern + @")\s+([^)\}\]]+?)\s*[\)\]\}])" +
+            @"|" +
+            // Option 2: Dash separator — consumes rest of string
+            @"(?:\s+[-–]\s+\s*(?:" + featKeywordsPattern + @")\s+(.*))" +
+            @"|" +
+            // Option 3: Bare feat/ft/featuring (no brackets/dash). Restricted to the
+            // unambiguous feat keyword; IsKnownArtist() still protects titles like "6 Ft. 7 Ft.".
+            @"(?:\s+f(?:ea)?t(?:\.|uring)?\s+(.*))",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        // Separators between artist names inside a feat segment: "X, Y & Z"
+        private static readonly Regex featContentSeparatorRegex = new Regex(
+            @"\s*(?:,|&|\+| and | y | et | und | con | with )\s*",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        // Normalized (PerformersParser.Normalize) contents of every feat segment
+        // found in a title: "Una noche (feat. The Corrs)" -> ["the corrs"].
+        private static List<string> ExtractFeatSegments(string title)
+        {
+            List<string> segments = new List<string>();
+            if (string.IsNullOrWhiteSpace(title))
+                return segments;
+
+            foreach (Match m in antiFeatRegex.Matches(title))
+            {
+                for (int g = 1; g <= 3; g++)
+                {
+                    if (m.Groups[g].Success)
+                    {
+                        string norm = PerformersParser.Normalize(m.Groups[g].Value);
+                        if (!string.IsNullOrEmpty(norm))
+                            segments.Add(norm);
+                        break;
+                    }
+                }
+            }
+            return segments;
+        }
+
+        private static bool NameAppearsInSegments(string name, List<string> normalizedSegments)
+        {
+            string n = PerformersParser.Normalize(name);
+            if (string.IsNullOrEmpty(n))
+                return false;
+
+            Regex wordBoundary = new Regex(@"\b" + Regex.Escape(n) + @"\b", RegexOptions.IgnoreCase);
+            foreach (string seg in normalizedSegments)
+            {
+                if (wordBoundary.IsMatch(seg))
+                    return true;
+            }
+            return false;
+        }
+
+        private static bool IsKnownArtist(string name, List<string> normalizedMetaArtists)
+        {
+            string n = PerformersParser.Normalize(name);
+            if (string.IsNullOrEmpty(n))
+                return true; // ignore empty parts
+
+            if (normalizedMetaArtists.Contains(n))
+                return true;
+
+            // Word-boundary match inside any meta artist:
+            // meta="Lil Wayne", feat="Lil" -> match; meta="Lily Allen", feat="Lil" -> no match.
+            Regex pattern = new Regex(@"\b" + Regex.Escape(n) + @"\b", RegexOptions.IgnoreCase);
+            foreach (string ma in normalizedMetaArtists)
+            {
+                if (pattern.IsMatch(ma))
+                    return true;
+            }
+            return false;
+        }
+
+        // Removes "(feat. X)" / "- feat X" / bare "feat X" segments from a track title
+        // when X is a KNOWN artist (present in the artist metadata), because those
+        // artists are rendered in the artist part of the file name / ARTIST tag instead.
+        // Unknown names are kept untouched (protects titles like "6 Ft. 7 Ft." and
+        // feats that Qobuz never lists as performers). tiddl clean_track_title parity.
+        public static string CleanTrackTitle(string trackTitle, IEnumerable<string> knownArtists)
+        {
+            if (string.IsNullOrWhiteSpace(trackTitle))
+                return trackTitle;
+
+            List<string> metaArtists = (knownArtists ?? Enumerable.Empty<string>())
+                .Where(a => !string.IsNullOrWhiteSpace(a))
+                .Select(PerformersParser.Normalize)
+                .Where(a => a.Length > 0)
+                .ToList();
+
+            string result = antiFeatRegex.Replace(trackTitle, delegate (Match match)
+            {
+                string content = null;
+                for (int g = 1; g <= 3; g++)
+                {
+                    if (match.Groups[g].Success)
+                    {
+                        content = match.Groups[g].Value;
+                        break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(content))
+                    return match.Value;
+
+                string[] parts = featContentSeparatorRegex.Split(content);
+
+                List<string> unknownParts = new List<string>();
+                foreach (string p in parts)
+                {
+                    if (!IsKnownArtist(p, metaArtists))
+                        unknownParts.Add(p.Trim());
+                }
+
+                if (unknownParts.Count == 0)
+                    return ""; // every feat'd name is a known artist -> drop the segment
+
+                if (unknownParts.Count == parts.Length)
+                    return match.Value; // none known -> not an artist credit, keep as-is
+
+                // Partial: keep only the unknown names, preserving the wrapper (parens etc.)
+                return match.Value.Replace(content, string.Join(", ", unknownParts.ToArray()));
+            });
+
+            result = result.Trim();
+
+            // Safety: a title that was ONLY a feat segment must not end up empty.
+            return result.Length > 0 ? result : trackTitle.Trim();
+        }
+
+        // Convenience overload: clean the track title using the track's own
+        // performers (main + featured) as the known-artist list.
+        public static string GetCleanTrackTitle(QopenAPI.Item QoItem)
+        {
+            PerformersParser parser = new PerformersParser(QoItem);
+            string[] main = parser.GetPerformersWithRole(InvolvedPersonRoleType.MainArtist);
+            string[] featured = parser.GetPerformersWithRole(InvolvedPersonRoleType.FeaturedArtist);
+            return CleanTrackTitle(QoItem.Title ?? "", main.Concat(featured));
+        }
+
         /// <summary>
         /// Get the Artist names with given role as an array
         /// </summary>
@@ -102,12 +263,17 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
         }
 
         // Adapted by ElektroStudios from QobuzDownloaderX-MOD's source-code to use a QopenAPI.Item object.
-        // Also, now it handles cases where the track title already contains " Feat. "-like words (case-insensitive)
-        // and where the performer name is a composed name that already contains " Feat " word.
-        // (i.e., does not add featured artists names to the resulting string.)
-        // Returns the canonical, ordered list of track artists = sorted(MAIN) + sorted(FEATURED),
-        // applying the same "feat. already in title" handling used for the merged name.
+        // Returns the canonical, ordered list of track artists = sorted(MAIN) + sorted(FEATURED).
         // Used for the multi-value ARTIST tag (one entry per artist) — tiddl / Orpheus parity.
+        //
+        // tiddl parity: featured artists BELONG in the artist part
+        // ("NN. Main ／ Feat - Clean Title"). When the title carries a
+        // "(feat. X)"-like segment we KEEP the featured performers (the old code
+        // dropped them, producing "Main - Title (feat. X)") and reclassify main
+        // artists that Qobuz misfiled as MainArtist but are really the feat'd
+        // guest. The "(feat. X)" text itself is stripped from the title by
+        // CleanTrackTitle() at the callers (file name via RenameTemplates.cs,
+        // TITLE tag via TagFile.cs).
         public static string[] GetTrackPerformersArray(QopenAPI.Item QoItem)
         {
             PerformersParser performersParser = new PerformersParser(QoItem);
@@ -131,26 +297,41 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
 
             if (hasFeat)
             {
-                // If the title already contains "feat."-like word, set the featuredPerformers to null.
-                featuredPerformers = null;
+                // Extract the feat-segment contents ("The Corrs" from
+                // "Una noche (feat. The Corrs)"), normalized for comparison.
+                List<string> featSegments = ExtractFeatSegments(title);
 
-                // Also, remove any main artists that appear in the track title, except the first main artist.
                 // Case: Qobuz API returns the featured artists as "Main Artist".
-                if (mainPerformers != null && mainPerformers.Length > 1)
+                // MOVE main artists (except the first) that appear inside a feat
+                // segment of the title to the FEATURED list. The old code removed
+                // them entirely, losing them from the file name and ARTIST tag.
+                if (mainPerformers != null && mainPerformers.Length > 1 && featSegments.Count > 0)
                 {
-                    string titleNorm = PerformersParser.Normalize(QoItem.Title);
+                    List<string> mainKeep = new List<string>();
+                    List<string> moved = new List<string>();
 
                     // Keep the first main artist.
-                    string firstArtist = mainPerformers[0];
+                    mainKeep.Add(mainPerformers[0]);
 
-                    // Filter the rest
-                    string[] filteredArtists = mainPerformers
-                        .Skip(1)
-                        .Where(mp => titleNorm.IndexOf(PerformersParser.Normalize(mp), StringComparison.OrdinalIgnoreCase) < 0)
-                        .ToArray();
+                    foreach (string mp in mainPerformers.Skip(1))
+                    {
+                        if (NameAppearsInSegments(mp, featSegments))
+                            moved.Add(mp);
+                        else
+                            mainKeep.Add(mp);
+                    }
 
-                    // Combine first artist with the filtered rest
-                    mainPerformers = new[] { firstArtist }.Concat(filteredArtists).ToArray();
+                    mainPerformers = mainKeep.ToArray();
+
+                    // Merge into featured, avoiding duplicates (normalized compare).
+                    List<string> featuredList = (featuredPerformers ?? new string[0]).ToList();
+                    foreach (string mv in moved)
+                    {
+                        string mvNorm = PerformersParser.Normalize(mv);
+                        if (!featuredList.Any(f => PerformersParser.Normalize(f) == mvNorm))
+                            featuredList.Add(mv);
+                    }
+                    featuredPerformers = featuredList.ToArray();
                 }
             }
 
