@@ -376,6 +376,13 @@ namespace QobuzDownloaderX.Helpers
             return template;
         }
 
+        // Unicode dash/hyphen lookalikes normalized to ASCII '-'. Covers hyphen,
+        // non-breaking hyphen, figure/en/em dash, horizontal bar and minus sign.
+        private static readonly HashSet<char> _dashLookalikes = new HashSet<char>
+        {
+            '‐', '‑', '‒', '–', '—', '―', '−'
+        };
+
         // Replacement glyphs for Windows-forbidden characters. Use the SAME full-width
         // Unicode forms as tiddl (CHAR_TO_FULL_WIDTH in tiddl/core/utils/strings.py) so
         // file names are byte-identical across tools (otherwise visually-equal names like
@@ -434,7 +441,12 @@ namespace QobuzDownloaderX.Helpers
             var sb = new StringBuilder(fileName.Length);
             foreach (char c in fileName)
             {
-                if (replacements.ContainsKey(c))
+                // Normalize Unicode dash lookalikes (hyphen, non-breaking hyphen,
+                // figure/en/em dash, horizontal bar, minus) to ASCII '-' so the same
+                // release names identically regardless of source (matches tiddl).
+                if (_dashLookalikes.Contains(c))
+                    sb.Append('-');
+                else if (replacements.ContainsKey(c))
                     sb.Append(replacements[c]);
                 else
                     sb.Append(c);
