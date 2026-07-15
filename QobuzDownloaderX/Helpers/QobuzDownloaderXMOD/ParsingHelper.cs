@@ -199,6 +199,29 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
                           .ToArray();
         }
 
+        // tiddl / streamrip parity: the same artist credited with different
+        // spellings (accents/case, e.g. "ROSALÍA" vs "Rosalia") counts once,
+        // keeping the FIRST spelling seen. Names normalizing equal to any in
+        // `exclude` are dropped too (featured already credited as main).
+        public static string[] DedupArtists(string[] artists, string[] exclude = null)
+        {
+            if (artists == null)
+                return new string[0];
+            var seen = new HashSet<string>((exclude ?? new string[0]).Select(PerformersParser.Normalize));
+            var result = new List<string>();
+            foreach (string a in artists)
+            {
+                if (string.IsNullOrWhiteSpace(a))
+                    continue;
+                string key = PerformersParser.Normalize(a);
+                if (seen.Contains(key))
+                    continue;
+                seen.Add(key);
+                result.Add(a);
+            }
+            return result.ToArray();
+        }
+
         // tiddl / Orpheus / deemix parity: the canonical artist order is sorted(MAIN) + sorted(FEATURED),
         // sorted case-sensitively (Ordinal) to match Python's default sorted(). Deterministic across tools.
         public static string[] SortArtists(string[] artists)
@@ -335,8 +358,10 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
                 }
             }
 
-            // Canonical order: sorted(MAIN) + sorted(FEATURED)
-            string[] ordered = SortArtists(mainPerformers).Concat(SortArtists(featuredPerformers)).ToArray();
+            // Canonical order: sorted(MAIN) + sorted(FEATURED). Final normalized
+            // dedup pass as a safety net (PerformersParser already dedups the
+            // performers-string path, but not every caller feeds through it).
+            string[] ordered = DedupArtists(SortArtists(mainPerformers).Concat(SortArtists(featuredPerformers)).ToArray());
 
             return ordered
                 .Select(DecodeEncodedNonAsciiCharacters)
@@ -390,8 +415,10 @@ namespace QobuzDownloaderX.Helpers.QobuzDownloaderXMOD
         {
             string AlbumArtist;
             string[] AlbumArtists;
-            AlbumArtists = ParsingHelper.GetArtistNames(QoAlbum.Artists, InvolvedPersonRoleType.MainArtist);
-            string[] featuredArtists = ParsingHelper.GetArtistNames(QoAlbum.Artists, InvolvedPersonRoleType.FeaturedArtist);
+            // Dedup normalizado (acentos/mayúsculas) — el path de álbum viene del
+            // array estructurado QoAlbum.Artists y NO pasa por PerformersParser.
+            AlbumArtists = DedupArtists(ParsingHelper.GetArtistNames(QoAlbum.Artists, InvolvedPersonRoleType.MainArtist));
+            string[] featuredArtists = DedupArtists(ParsingHelper.GetArtistNames(QoAlbum.Artists, InvolvedPersonRoleType.FeaturedArtist), AlbumArtists);
             string albumArtists = ParsingHelper.MergeFeaturedArtistsWithMainArtists(AlbumArtists, featuredArtists);
             // Add Featured Artists to Album Artists, canonical order: sorted(MAIN) + sorted(FEATURED).
             AlbumArtists = SortArtists(AlbumArtists).Concat(SortArtists(featuredArtists)).ToArray();
