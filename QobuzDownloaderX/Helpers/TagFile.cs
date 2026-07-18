@@ -254,11 +254,13 @@ namespace QobuzDownloaderX
             {
                 if (Settings.Default.mergeArtistNames)
                 {
-                    // Multi-value ARTIST (one entry per artist), canonical order sorted(MAIN)+sorted(FEATURED) — tiddl/Orpheus parity.
+                    // Opcion A: UN solo valor unido con " / " con todos los artistas
+                    // (orden canonico sorted(MAIN)+sorted(FEATURED)). VJ/RadioBoss no
+                    // leen campos de artista multivaluados; muestran solo el primero.
                     string[] performers = ParsingHelper.GetTrackPerformersArray(QoItem);
-                    file.Tag.Performers = performers.Length > 0
-                        ? performers
-                        : new[] { QoItem.Performer?.Name };
+                    file.Tag.Performers = new[] {
+                        performers.Length > 0 ? string.Join(" / ", performers) : QoItem.Performer?.Name
+                    };
                 } else {
                     file.Tag.Performers = new[] { QoItem.Performer?.Name };
                 }
